@@ -55,4 +55,22 @@ class RegisterTests {
         assertEquals(0xAB.toUByte(), r.H)
         assertEquals(0xCD.toUByte(), r.L)
     }
+
+    @Test
+    fun test16BitSplitExhaustive() {
+        for (i in UShort.MIN_VALUE..UShort.MAX_VALUE) {
+            val actual = i.toUShort()
+            assertEquals(actual, actual.splitHighAndLowBits().toUShort());
+        }
+    }
+
+    @Test
+    fun test8BitJoinExhaustive() {
+        for (x in UByte.MIN_VALUE..UByte.MAX_VALUE) {
+            for (y in UByte.MIN_VALUE..UByte.MAX_VALUE) {
+                val actual: Pair<UByte, UByte> = Pair(x.toUByte(), y.toUByte())
+                assertEquals(actual, actual.toUShort().splitHighAndLowBits())
+            }
+        }
+    }
 }
