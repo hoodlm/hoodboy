@@ -4,20 +4,26 @@ import org.junit.jupiter.api.Test
 class CPUNOOPSmokeTest {
     @Test
     fun interpretAllAsNoop() {
-        val cpu = CPU(Registers(), Memory(), NOOPInstructionInterpreter())
-        cpu.assertMemoryZeroes()
+        val registers = Registers()
+        val memory = Memory()
+        val cpu = CPU(registers, memory, NOOPInstructionInterpreter())
+        memory.assertMemoryZeroes()
         for (byte in 0u..255u) {
             val instruction = byte.toUByte();
+            val expectedPCBefore: UShort = instruction.toUShort()
+            assertEquals(expectedPCBefore, registers.PC)
             cpu.execInstruction(instruction)
+            val expectedPCAfter: UShort = expectedPCBefore.inc()
+            assertEquals(expectedPCAfter, registers.PC)
         }
-        cpu.assertMemoryZeroes()
+        memory.assertMemoryZeroes()
     }
 
-    private fun CPU.assertMemoryZeroes() {
+    private fun Memory.assertMemoryZeroes() {
         val zero: UByte = 0u
         for (i in UShort.MIN_VALUE..UShort.MAX_VALUE) {
             val address = i.toUShort()
-            assertEquals(zero, this.memory.getByte(address));
+            assertEquals(zero, this.getByte(address));
         }
     }
 }
