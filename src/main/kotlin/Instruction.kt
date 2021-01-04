@@ -32,19 +32,61 @@ interface InstructionLoad16BitLiteral: InstructionLoadLiteral {
 }
 
 class InstructionLoadBCd16(): InstructionLoad16BitLiteral {
-    override fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>> {
-        return listOf(registers::B, registers::C)
-    }
+    override fun registersToLoad(registers: Registers) = listOf(registers::B, registers::C)
 }
 
 class InstructionLoadDEd16(): InstructionLoad16BitLiteral {
-    override fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>> {
-        return listOf(registers::D, registers::E)
-    }
+    override fun registersToLoad(registers: Registers) = listOf(registers::D, registers::E)
 }
 
 class InstructionLoadHLd16(): InstructionLoad16BitLiteral {
-    override fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>> {
-        return listOf(registers::H, registers::L)
+    override fun registersToLoad(registers: Registers) = listOf(registers::H, registers::L)
+}
+
+interface InstructionIncrementByteRegister: Instruction {
+    override val size: UShort
+        get() = 1u
+
+    fun registerToIncrement(registers: Registers): KMutableProperty<UByte>
+    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        val targetRegister = registerToIncrement(registers)
+        val currentValue = targetRegister.getter.call()
+        targetRegister.setter.call(currentValue.inc())
     }
+}
+
+class InstructionIncrementB: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::B
+}
+
+class InstructionIncrementD: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::D
+}
+
+class InstructionIncrementH: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::H
+}
+
+interface InstructionDecrementByteRegister: Instruction {
+    override val size: UShort
+        get() = 1u
+
+    fun registerToDecrement(registers: Registers): KMutableProperty<UByte>
+    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        val targetRegister = registerToDecrement(registers)
+        val currentValue = targetRegister.getter.call()
+        targetRegister.setter.call(currentValue.dec())
+    }
+}
+
+class InstructionDecrementB: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::B
+}
+
+class InstructionDecrementD: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::D
+}
+
+class InstructionDecrementH: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::H
 }

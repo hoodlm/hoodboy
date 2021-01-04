@@ -72,6 +72,61 @@ class InstructionTests {
         r.assertZeroed()
     }
 
+    @Test fun testIncrementDecrementSingleByteRegisters() {
+        r.B = 12u
+        r.D = 22u
+        r.H = 32u
+        InstructionIncrementB().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(22, r.D.toInt())
+        assertEquals(32, r.H.toInt())
+        InstructionIncrementB().invoke(r, m, NO_DATA)
+        assertEquals(14, r.B.toInt())
+        assertEquals(22, r.D.toInt())
+        assertEquals(32, r.H.toInt())
+        InstructionDecrementB().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(22, r.D.toInt())
+        assertEquals(32, r.H.toInt())
+
+        InstructionIncrementD().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(23, r.D.toInt())
+        assertEquals(32, r.H.toInt())
+        InstructionIncrementD().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(24, r.D.toInt())
+        assertEquals(32, r.H.toInt())
+        InstructionDecrementD().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(23, r.D.toInt())
+        assertEquals(32, r.H.toInt())
+
+        InstructionIncrementH().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(23, r.D.toInt())
+        assertEquals(33, r.H.toInt())
+        InstructionIncrementH().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(23, r.D.toInt())
+        assertEquals(34, r.H.toInt())
+        InstructionDecrementH().invoke(r, m, NO_DATA)
+        assertEquals(13, r.B.toInt())
+        assertEquals(23, r.D.toInt())
+        assertEquals(33, r.H.toInt())
+
+        for (i in 1..13) {
+            InstructionDecrementB().invoke(r, m, NO_DATA)
+        }
+        for (i in 1..23) {
+            InstructionDecrementD().invoke(r, m, NO_DATA)
+        }
+        for (i in 1..33) {
+            InstructionDecrementH().invoke(r, m, NO_DATA)
+        }
+        r.assertZeroed()
+    }
+
     private fun Registers.assertZeroed() {
         val zeroByte: UByte = 0u
         val zeroShort: UShort = 0u
