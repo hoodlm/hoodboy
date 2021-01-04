@@ -1,3 +1,5 @@
+import InstructionInterpreter.Companion.BIT16_OPCODE_PREFIX
+
 interface InstructionInterpreter {
     /**
      * Map a pair of bytes into the corresponding instruction class.
@@ -12,8 +14,38 @@ interface InstructionInterpreter {
     }
 }
 
-class NOOPInstructionInterpreter : InstructionInterpreter {
+/**
+ * The real deal, derived from https://meganesulli.com/generate-gb-opcodes/
+ */
+class GameBoyInstructionInterpreter: InstructionInterpreter {
     override fun interpret(bytes: Pair<UByte, UByte>): Instruction {
-        return NOOPInstruction()
+        return if (BIT16_OPCODE_PREFIX == bytes.first) {
+            interpret16BitOpCode(bytes.second)
+        } else {
+            interpret8BitOpCode(bytes.first)
+        }
+    }
+
+    private fun interpret8BitOpCode(opcode: UByte): Instruction {
+        return when (opcode.toUInt()) {
+            0x00u -> InstructionNOOP()
+            0x01u -> InstructionLoadBCd16()
+            else -> {
+                throw RuntimeException("8-bit opcode $opcode is not yet implemented")
+            }
+        }
+    }
+
+    private fun interpret16BitOpCode(opcode: UByte): Instruction {
+        throw RuntimeException("16-bit opcode $BIT16_OPCODE_PREFIX $opcode is not yet implemented")
+    }
+}
+
+/**
+ * Stub, e.g. for testing
+ */
+class NOOPInstructionInterpreter: InstructionInterpreter {
+    override fun interpret(bytes: Pair<UByte, UByte>): Instruction {
+        return InstructionNOOP()
     }
 }
