@@ -30,6 +30,8 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
         return when (opcode.toUInt()) {
             0x00u -> InstructionNOOP()
             0x01u -> InstructionLoadBCd16()
+            0x11u -> InstructionLoadDEd16()
+            0x21u -> InstructionLoadHLd16()
             else -> {
                 throw RuntimeException("8-bit opcode $opcode is not yet implemented")
             }

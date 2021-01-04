@@ -1,3 +1,5 @@
+import kotlin.reflect.KMutableProperty
+
 interface Instruction : (Registers, Memory, Collection<UByte>) -> Unit {
     /**
      * Size of the instruction in bytes
@@ -12,13 +14,37 @@ class InstructionNOOP(): Instruction {
     }
 }
 
-class InstructionLoadBCd16(): Instruction {
-    override val size: UShort = 3u
+interface InstructionLoadLiteral: Instruction {
+    fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>>
+
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
-        assert(immediateData.size == 2)
-        immediateData.toList().also { data ->
-            registers.B = data[0]
-            registers.C = data[1]
+        val targetRegisters = registersToLoad(registers)
+        assert(immediateData.size == targetRegisters.size)
+        targetRegisters.forEachIndexed { index, register ->
+            register.setter.call(immediateData.toList().get(index))
         }
+    }
+}
+
+interface InstructionLoad16BitLiteral: InstructionLoadLiteral {
+    override val size: UShort
+        get() = 3u
+}
+
+class InstructionLoadBCd16(): InstructionLoad16BitLiteral {
+    override fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>> {
+        return listOf(registers::B, registers::C)
+    }
+}
+
+class InstructionLoadDEd16(): InstructionLoad16BitLiteral {
+    override fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>> {
+        return listOf(registers::D, registers::E)
+    }
+}
+
+class InstructionLoadHLd16(): InstructionLoad16BitLiteral {
+    override fun registersToLoad(registers: Registers): List<KMutableProperty<UByte>> {
+        return listOf(registers::H, registers::L)
     }
 }
