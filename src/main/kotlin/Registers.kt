@@ -54,4 +54,8 @@ class Registers {
         SP = 0u;
         PC = 0u;
     }
+
+    fun dumpRegisters(): String {
+        return "A=$A, F=$F, B=$B, C=$C, D=$D, E=$E, H=$H, L=$L, SP=$SP, PC=$PC"
+    }
 }
