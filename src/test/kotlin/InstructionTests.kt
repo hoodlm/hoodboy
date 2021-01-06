@@ -127,16 +127,90 @@ class InstructionTests {
         r.assertZeroed()
     }
 
+
+    @Test fun testIncrementDecrementDoubleRegisters() {
+        val zero: UShort = 0u
+        val max: UShort = 0xFEDCu
+        // count up for each of BC, DE, HL, SP
+        for (i in 1..max.toInt()) {
+            assertEquals((i - 1).toUShort(), r.BC())
+            InstructionIncrementBC().invoke(r, m, NO_DATA)
+            assertEquals(i.toUShort(), r.BC())
+            assertEquals(zero, r.DE())
+            assertEquals(zero, r.HL())
+            assertEquals(zero, r.SP)
+        }
+        for (i in 1..max.toInt()) {
+            assertEquals((i - 1).toUShort(), r.DE())
+            InstructionIncrementDE().invoke(r, m, NO_DATA)
+            assertEquals(i.toUShort(), r.DE())
+            assertEquals(max, r.BC())
+            assertEquals(zero, r.HL())
+            assertEquals(zero, r.SP)
+        }
+        for (i in 1..max.toInt()) {
+            assertEquals((i - 1).toUShort(), r.HL())
+            InstructionIncrementHL().invoke(r, m, NO_DATA)
+            assertEquals(i.toUShort(), r.HL())
+            assertEquals(max, r.BC())
+            assertEquals(max, r.DE())
+            assertEquals(zero, r.SP)
+        }
+        for (i in 1..max.toInt()) {
+            assertEquals((i - 1).toUShort(), r.SP)
+            InstructionIncrementSP().invoke(r, m, NO_DATA)
+            assertEquals(i.toUShort(), r.SP)
+            assertEquals(max, r.BC())
+            assertEquals(max, r.DE())
+            assertEquals(max, r.HL())
+        }
+        // count down for each of BC, DE, HL, SP
+        for (i in 1..max.toInt()) {
+            assertEquals((max.toInt() - i + 1).toUShort(), r.BC())
+            InstructionDecrementBC().invoke(r, m, NO_DATA)
+            assertEquals((max.toInt() - i).toUShort(), r.BC())
+            assertEquals(max, r.DE())
+            assertEquals(max, r.HL())
+            assertEquals(max, r.SP)
+        }
+        for (i in 1..max.toInt()) {
+            assertEquals((max.toInt() - i + 1).toUShort(), r.DE())
+            InstructionDecrementDE().invoke(r, m, NO_DATA)
+            assertEquals((max.toInt() - i).toUShort(), r.DE())
+            assertEquals(zero, r.BC())
+            assertEquals(max, r.HL())
+            assertEquals(max, r.SP)
+        }
+        for (i in 1..max.toInt()) {
+            assertEquals((max.toInt() - i + 1).toUShort(), r.HL())
+            InstructionDecrementHL().invoke(r, m, NO_DATA)
+            assertEquals((max.toInt() - i).toUShort(), r.HL())
+            assertEquals(zero, r.BC())
+            assertEquals(zero, r.DE())
+            assertEquals(max, r.SP)
+        }
+        for (i in 1..max.toInt()) {
+            assertEquals((max.toInt() - i + 1).toUShort(), r.SP)
+            InstructionDecrementSP().invoke(r, m, NO_DATA)
+            assertEquals((max.toInt() - i).toUShort(), r.SP)
+            assertEquals(zero, r.BC())
+            assertEquals(zero, r.DE())
+            assertEquals(zero, r.HL())
+        }
+        // finally make sure everything is zero
+        r.assertZeroed()
+    }
+
     private fun Registers.assertZeroed() {
         val zeroByte: UByte = 0u
         val zeroShort: UShort = 0u
         listOf(
             this.A, this.B, this.C, this.D, this.E, this.F, this.H, this.L
         ).forEach { bit8Register ->
-            assertEquals(zeroByte, bit8Register)
+            assertEquals(zeroByte, bit8Register, "Registers not zeroed: ${this.dumpRegisters()}")
         }
         listOf(this.PC, this.SP).forEach { bit16Register ->
-            assertEquals(zeroShort, bit16Register)
+            assertEquals(zeroShort, bit16Register, "Registers not zeroed: ${this.dumpRegisters()}")
         }
     }
 }
