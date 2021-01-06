@@ -14,46 +14,63 @@ class TestBinaryUtil {
         assertEquals(0x00u.toUByte(), r.A)
         assertEquals(0x00u.toUByte(), r.F)
 
-        r.setAF(0xF00Fu)
+        var twobyte: UShort
+        twobyte = 0xF00fu
+        r.setAF(twobyte)
         assertEquals(0xF0u.toUByte(), r.A)
         assertEquals(0x0Fu.toUByte(), r.F)
+        assertEquals(twobyte, r.AF())
 
-        r.setAF(0x0001u)
+        twobyte = 0x0001u
+        r.setAF(twobyte)
         assertEquals(0x00u.toUByte(), r.A)
         assertEquals(0x01u.toUByte(), r.F)
+        assertEquals(twobyte, r.AF())
 
-        r.setAF(0x0100u)
+        twobyte = 0x0100u
+        r.setAF(twobyte)
         assertEquals(0x01u.toUByte(), r.A)
         assertEquals(0x00u.toUByte(), r.F)
+        assertEquals(twobyte, r.AF())
 
-        r.setAF(0xFFFFu)
+        twobyte = 0xFFFFu
+        r.setAF(twobyte)
         assertEquals(0xFFu.toUByte(), r.A)
         assertEquals(0xFFu.toUByte(), r.F)
+        assertEquals(twobyte, r.AF())
 
-        r.setAF(0x0000u)
+        twobyte = 0x0000u
+        r.setAF(twobyte)
         assertEquals(0x00u.toUByte(), r.A)
         assertEquals(0x00u.toUByte(), r.F)
+        assertEquals(twobyte, r.AF())
     }
 
     @Test
     fun testBC() {
-        r.setBC(0xABCDu)
+        var twobyte: UShort = 0xABCDu
+        r.setBC(twobyte)
         assertEquals(0xAB.toUByte(), r.B)
         assertEquals(0xCD.toUByte(), r.C)
+        assertEquals(twobyte, r.BC())
     }
 
     @Test
     fun testDE() {
-        r.setDE(0xABCDu)
+        var twobyte: UShort = 0xABCDu
+        r.setDE(twobyte)
         assertEquals(0xAB.toUByte(), r.D)
         assertEquals(0xCD.toUByte(), r.E)
+        assertEquals(twobyte, r.DE())
     }
 
     @Test
     fun testHL() {
-        r.setHL(0xABCDu)
+        var twobyte: UShort = 0xABCDu
+        r.setHL(twobyte)
         assertEquals(0xAB.toUByte(), r.H)
         assertEquals(0xCD.toUByte(), r.L)
+        assertEquals(twobyte, r.HL())
     }
 
     @Test

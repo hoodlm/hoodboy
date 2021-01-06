@@ -21,11 +21,19 @@ class Registers {
         }
     }
 
+    fun AF(): UShort {
+        return Pair(this.A, this.F).toUShort()
+    }
+
     fun setBC(af: UShort) {
         af.splitHighAndLowBits().also {
             this.B = it.first
             this.C = it.second
         }
+    }
+
+    fun BC(): UShort {
+        return Pair(this.B, this.C).toUShort()
     }
 
     fun setDE(af: UShort) {
@@ -35,12 +43,21 @@ class Registers {
         }
     }
 
+    fun DE(): UShort {
+        return Pair(this.D, this.E).toUShort()
+    }
+
     fun setHL(af: UShort) {
         af.splitHighAndLowBits().also {
             this.H = it.first
             this.L = it.second
         }
     }
+
+    fun HL(): UShort {
+        return Pair(this.H, this.L).toUShort()
+    }
+
 
     fun clear() {
         A  = 0u;
