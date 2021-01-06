@@ -127,6 +127,50 @@ class InstructionTests {
         r.assertZeroed()
     }
 
+    @Test fun testIncrementDecrementSingleByteRegistersLowEffort() {
+        val one: UByte = 1u
+        val zero: UByte = 0u
+
+        InstructionIncrementA().invoke(r, m, NO_DATA)
+        assertEquals(one, r.A)
+        InstructionDecrementA().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementB().invoke(r, m, NO_DATA)
+        assertEquals(one, r.B)
+        InstructionDecrementB().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementC().invoke(r, m, NO_DATA)
+        assertEquals(one, r.C)
+        InstructionDecrementC().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementD().invoke(r, m, NO_DATA)
+        assertEquals(one, r.D)
+        InstructionDecrementD().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementE().invoke(r, m, NO_DATA)
+        assertEquals(one, r.E)
+        InstructionDecrementE().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementF().invoke(r, m, NO_DATA)
+        assertEquals(one, r.F)
+        InstructionDecrementF().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementH().invoke(r, m, NO_DATA)
+        assertEquals(one, r.H)
+        InstructionDecrementH().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+
+        InstructionIncrementL().invoke(r, m, NO_DATA)
+        assertEquals(one, r.L)
+        InstructionDecrementL().invoke(r, m, NO_DATA)
+        r.assertZeroed()
+    }
 
     @Test fun testIncrementDecrementDoubleRegisters() {
         val zero: UShort = 0u
@@ -209,7 +253,7 @@ class InstructionTests {
         ).forEach { bit8Register ->
             assertEquals(zeroByte, bit8Register, "Registers not zeroed: ${this.dumpRegisters()}")
         }
-        listOf(this.PC, this.SP).forEach { bit16Register ->
+        listOf(this.PC, this.SP, this.BC(), this.DE(), this.AF(), this.HL()).forEach { bit16Register ->
             assertEquals(zeroShort, bit16Register, "Registers not zeroed: ${this.dumpRegisters()}")
         }
     }

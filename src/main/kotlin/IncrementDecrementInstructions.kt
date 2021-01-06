@@ -80,16 +80,36 @@ interface InstructionIncrementByteRegister: Instruction {
     }
 }
 
+class InstructionIncrementA: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::A
+}
+
 class InstructionIncrementB: InstructionIncrementByteRegister {
     override fun registerToIncrement(registers: Registers) = registers::B
+}
+
+class InstructionIncrementC: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::C
 }
 
 class InstructionIncrementD: InstructionIncrementByteRegister {
     override fun registerToIncrement(registers: Registers) = registers::D
 }
 
+class InstructionIncrementE: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::E
+}
+
+class InstructionIncrementF: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::F
+}
+
 class InstructionIncrementH: InstructionIncrementByteRegister {
     override fun registerToIncrement(registers: Registers) = registers::H
+}
+
+class InstructionIncrementL: InstructionIncrementByteRegister {
+    override fun registerToIncrement(registers: Registers) = registers::L
 }
 
 interface InstructionDecrementByteRegister: Instruction {
@@ -104,14 +124,34 @@ interface InstructionDecrementByteRegister: Instruction {
     }
 }
 
+class InstructionDecrementA: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::A
+}
+
 class InstructionDecrementB: InstructionDecrementByteRegister {
     override fun registerToDecrement(registers: Registers) = registers::B
+}
+
+class InstructionDecrementC: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::C
 }
 
 class InstructionDecrementD: InstructionDecrementByteRegister {
     override fun registerToDecrement(registers: Registers) = registers::D
 }
 
+class InstructionDecrementE: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::E
+}
+
+class InstructionDecrementF: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::F
+}
+
 class InstructionDecrementH: InstructionDecrementByteRegister {
     override fun registerToDecrement(registers: Registers) = registers::H
+}
+
+class InstructionDecrementL: InstructionDecrementByteRegister {
+    override fun registerToDecrement(registers: Registers) = registers::L
 }
