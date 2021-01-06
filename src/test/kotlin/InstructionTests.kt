@@ -32,11 +32,45 @@ class InstructionTests {
 
     @Test fun testLoadBC16dNegative() {
         val instruction = InstructionLoadBCd16()
-        listOf(NO_DATA, ONE_BYTE_DATA, THREE_BYTE_DATA).forEach {
+        listOf(NO_DATA, ONE_BYTE_DATA).forEach {
             assertThrows(AssertionError::class.java) {
                 instruction.invoke(r, m, it)
             }
         }
+    }
+
+    @Test fun testLoadBd8Negative() {
+        val instruction = InstructionLoadBd8()
+        assertThrows(AssertionError::class.java) {
+            instruction.invoke(r, m, NO_DATA)
+        }
+    }
+
+    @Test fun testLoadBd8Happy() {
+        val instruction = InstructionLoadBd8()
+        instruction.invoke(r, m, ONE_BYTE_DATA)
+        assertEquals(r.B, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.B = 0u
+        r.assertZeroed()
+    }
+
+    @Test fun testLoadDd8Happy() {
+        val instruction = InstructionLoadDd8()
+        instruction.invoke(r, m, ONE_BYTE_DATA)
+        assertEquals(r.D, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.D = 0u
+        r.assertZeroed()
+    }
+
+    @Test fun testLoadHd8Happy() {
+        val instruction = InstructionLoadHd8()
+        instruction.invoke(r, m, ONE_BYTE_DATA)
+        assertEquals(r.H, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.H = 0u
+        r.assertZeroed()
     }
 
     @Test fun testLoadBC16dHappy() {

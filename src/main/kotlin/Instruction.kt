@@ -19,12 +19,30 @@ interface InstructionLoadLiteral: Instruction {
 
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
         val targetRegisters = registersToLoad(registers)
-        assert(immediateData.size == targetRegisters.size)
+        assert(immediateData.size >= targetRegisters.size)
         targetRegisters.forEachIndexed { index, register ->
             register.setter.call(immediateData.toList().get(index))
         }
     }
 }
+
+interface InstructionLoad8BitLiteral: InstructionLoadLiteral {
+    override val size: UShort
+        get() = 2u
+}
+
+class InstructionLoadBd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::B)
+}
+
+class InstructionLoadDd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::D)
+}
+
+class InstructionLoadHd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::H)
+}
+
 
 interface InstructionLoad16BitLiteral: InstructionLoadLiteral {
     override val size: UShort
