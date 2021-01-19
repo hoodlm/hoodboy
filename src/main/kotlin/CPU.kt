@@ -8,24 +8,24 @@ class CPU(private val registers: Registers,
     fun fetchAndRunNextInstruction() {
         val instructionAddress = registers.PC
         println("Fetching instruction at address $instructionAddress")
-        val opcodeByteOne = memory.getByte(instructionAddress)
-        // FIXME: This is wrong -- the same bit is included in both opcode && immediate data
-        val immediateData = listOf(
+        val data = listOf(
+            memory.getByte((instructionAddress).toUShort()),
             memory.getByte((instructionAddress + 1u).toUShort()),
             memory.getByte((instructionAddress + 2u).toUShort()),
             memory.getByte((instructionAddress + 3u).toUShort())
         )
-        val opcode = Pair(opcodeByteOne, immediateData.get(0))
-        execInstruction(opcode, immediateData)
+        execInstruction(data)
         sleep(10)
     }
 
-    fun execInstruction(opcode: Pair<UByte, UByte>, immediateData: Collection<UByte>) {
+    fun execInstruction(bytes: List<UByte>) {
+        assert(4 == bytes.size)
+        val opcode = Pair(bytes[0], bytes[1])
         try {
             instructionInterpreter.interpret(opcode).also { instruction ->
                 println("Executing instruction: ${opcode} / ${instruction.javaClass}")
                 registers.PC = (registers.PC + instruction.size).toUShort()
-                instruction.invoke(registers, memory, immediateData)
+                instruction.invoke(registers, memory, bytes)
                 println("Register state -> ${registers.dumpRegisters()}")
             }
         } catch(x: Exception) {

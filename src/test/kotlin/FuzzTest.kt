@@ -17,7 +17,7 @@ class FuzzTest {
         for (i in 0..runCount) {
             val bytes = r.nextUBytes(4)
             try {
-                cpu.execInstruction(Pair(bytes[0], bytes[1]), listOf(bytes[2], bytes[3]))
+                cpu.execInstruction(listOf(bytes[0], bytes[1], bytes[2], bytes[3]))
             } catch (x: RuntimeException) {
                 if (true == x.message?.endsWith("is not yet implemented")) {
                     // ignore unimplemented instructions

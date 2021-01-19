@@ -8,13 +8,14 @@ class InstructionTests {
     val r = Registers()
     val m = Memory()
 
-    val BYTE_1: UByte = 0x11u
-    val BYTE_2: UByte = 0x22u
-    val BYTE_3: UByte = 0x33u
+    val BYTE_0: UByte = 0x11u
+    val BYTE_1: UByte = 0x22u
+    val BYTE_2: UByte = 0x33u
+    val BYTE_3: UByte = 0x44u
+    val DATA: Collection<UByte> = listOf(BYTE_0, BYTE_1, BYTE_2, BYTE_3)
+
     val NO_DATA: Collection<UByte> = setOf()
-    val ONE_BYTE_DATA: Collection<UByte> = listOf(BYTE_1)
-    val TWO_BYTE_DATA: Collection<UByte> = listOf(BYTE_1, BYTE_2)
-    val THREE_BYTE_DATA: Collection<UByte> = listOf(BYTE_1, BYTE_2, BYTE_3)
+    val ONE_BYTE_DATA: Collection<UByte> = setOf(BYTE_1)
 
     @BeforeEach
     fun reset() {
@@ -24,10 +25,8 @@ class InstructionTests {
 
     @Test fun testNOOP() {
         val instruction = InstructionNOOP()
-        listOf(NO_DATA, ONE_BYTE_DATA, TWO_BYTE_DATA, THREE_BYTE_DATA).forEach { immediateData ->
-            instruction.invoke(r, m, immediateData)
-            r.assertZeroed()
-        }
+        instruction.invoke(r, m, DATA)
+        r.assertZeroed()
     }
 
     @Test fun testLoadBC16dNegative() {
@@ -48,7 +47,7 @@ class InstructionTests {
 
     @Test fun testLoadBd8Happy() {
         val instruction = InstructionLoadBd8()
-        instruction.invoke(r, m, ONE_BYTE_DATA)
+        instruction.invoke(r, m, DATA)
         assertEquals(r.B, BYTE_1)
         // if we reset this register, all registers should be back to zero
         r.B = 0u
@@ -57,7 +56,7 @@ class InstructionTests {
 
     @Test fun testLoadDd8Happy() {
         val instruction = InstructionLoadDd8()
-        instruction.invoke(r, m, ONE_BYTE_DATA)
+        instruction.invoke(r, m, DATA)
         assertEquals(r.D, BYTE_1)
         // if we reset this register, all registers should be back to zero
         r.D = 0u
@@ -66,7 +65,7 @@ class InstructionTests {
 
     @Test fun testLoadHd8Happy() {
         val instruction = InstructionLoadHd8()
-        instruction.invoke(r, m, ONE_BYTE_DATA)
+        instruction.invoke(r, m, DATA)
         assertEquals(r.H, BYTE_1)
         // if we reset this register, all registers should be back to zero
         r.H = 0u
@@ -75,7 +74,7 @@ class InstructionTests {
 
     @Test fun testLoadBC16dHappy() {
         val instruction = InstructionLoadBCd16()
-        instruction.invoke(r, m, TWO_BYTE_DATA)
+        instruction.invoke(r, m, DATA)
         assertEquals(r.B, BYTE_1)
         assertEquals(r.C, BYTE_2)
         // if we reset those two registers, all registers should be back to zero
@@ -86,7 +85,7 @@ class InstructionTests {
 
     @Test fun testLoadDE16dHappy() {
         val instruction = InstructionLoadDEd16()
-        instruction.invoke(r, m, TWO_BYTE_DATA)
+        instruction.invoke(r, m, DATA)
         assertEquals(r.D, BYTE_1)
         assertEquals(r.E, BYTE_2)
         // if we reset those two registers, all registers should be back to zero
@@ -97,7 +96,7 @@ class InstructionTests {
 
     @Test fun testLoadHL16dHappy() {
         val instruction = InstructionLoadHLd16()
-        instruction.invoke(r, m, TWO_BYTE_DATA)
+        instruction.invoke(r, m, DATA)
         assertEquals(r.H, BYTE_1)
         assertEquals(r.L, BYTE_2)
         // if we reset those two registers, all registers should be back to zero
@@ -110,53 +109,53 @@ class InstructionTests {
         r.B = 12u
         r.D = 22u
         r.H = 32u
-        InstructionIncrementB().invoke(r, m, NO_DATA)
+        InstructionIncrementB().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(22, r.D.toInt())
         assertEquals(32, r.H.toInt())
-        InstructionIncrementB().invoke(r, m, NO_DATA)
+        InstructionIncrementB().invoke(r, m, DATA)
         assertEquals(14, r.B.toInt())
         assertEquals(22, r.D.toInt())
         assertEquals(32, r.H.toInt())
-        InstructionDecrementB().invoke(r, m, NO_DATA)
+        InstructionDecrementB().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(22, r.D.toInt())
         assertEquals(32, r.H.toInt())
 
-        InstructionIncrementD().invoke(r, m, NO_DATA)
+        InstructionIncrementD().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(23, r.D.toInt())
         assertEquals(32, r.H.toInt())
-        InstructionIncrementD().invoke(r, m, NO_DATA)
+        InstructionIncrementD().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(24, r.D.toInt())
         assertEquals(32, r.H.toInt())
-        InstructionDecrementD().invoke(r, m, NO_DATA)
+        InstructionDecrementD().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(23, r.D.toInt())
         assertEquals(32, r.H.toInt())
 
-        InstructionIncrementH().invoke(r, m, NO_DATA)
+        InstructionIncrementH().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(23, r.D.toInt())
         assertEquals(33, r.H.toInt())
-        InstructionIncrementH().invoke(r, m, NO_DATA)
+        InstructionIncrementH().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(23, r.D.toInt())
         assertEquals(34, r.H.toInt())
-        InstructionDecrementH().invoke(r, m, NO_DATA)
+        InstructionDecrementH().invoke(r, m, DATA)
         assertEquals(13, r.B.toInt())
         assertEquals(23, r.D.toInt())
         assertEquals(33, r.H.toInt())
 
         for (i in 1..13) {
-            InstructionDecrementB().invoke(r, m, NO_DATA)
+            InstructionDecrementB().invoke(r, m, DATA)
         }
         for (i in 1..23) {
-            InstructionDecrementD().invoke(r, m, NO_DATA)
+            InstructionDecrementD().invoke(r, m, DATA)
         }
         for (i in 1..33) {
-            InstructionDecrementH().invoke(r, m, NO_DATA)
+            InstructionDecrementH().invoke(r, m, DATA)
         }
         r.assertZeroed()
     }
@@ -165,44 +164,44 @@ class InstructionTests {
         val one: UByte = 1u
         val zero: UByte = 0u
 
-        InstructionIncrementA().invoke(r, m, NO_DATA)
+        InstructionIncrementA().invoke(r, m, DATA)
         assertEquals(one, r.A)
-        InstructionDecrementA().invoke(r, m, NO_DATA)
+        InstructionDecrementA().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementB().invoke(r, m, NO_DATA)
+        InstructionIncrementB().invoke(r, m, DATA)
         assertEquals(one, r.B)
-        InstructionDecrementB().invoke(r, m, NO_DATA)
+        InstructionDecrementB().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementC().invoke(r, m, NO_DATA)
+        InstructionIncrementC().invoke(r, m, DATA)
         assertEquals(one, r.C)
-        InstructionDecrementC().invoke(r, m, NO_DATA)
+        InstructionDecrementC().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementD().invoke(r, m, NO_DATA)
+        InstructionIncrementD().invoke(r, m, DATA)
         assertEquals(one, r.D)
-        InstructionDecrementD().invoke(r, m, NO_DATA)
+        InstructionDecrementD().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementE().invoke(r, m, NO_DATA)
+        InstructionIncrementE().invoke(r, m, DATA)
         assertEquals(one, r.E)
-        InstructionDecrementE().invoke(r, m, NO_DATA)
+        InstructionDecrementE().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementF().invoke(r, m, NO_DATA)
+        InstructionIncrementF().invoke(r, m, DATA)
         assertEquals(one, r.F)
-        InstructionDecrementF().invoke(r, m, NO_DATA)
+        InstructionDecrementF().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementH().invoke(r, m, NO_DATA)
+        InstructionIncrementH().invoke(r, m, DATA)
         assertEquals(one, r.H)
-        InstructionDecrementH().invoke(r, m, NO_DATA)
+        InstructionDecrementH().invoke(r, m, DATA)
         r.assertZeroed()
 
-        InstructionIncrementL().invoke(r, m, NO_DATA)
+        InstructionIncrementL().invoke(r, m, DATA)
         assertEquals(one, r.L)
-        InstructionDecrementL().invoke(r, m, NO_DATA)
+        InstructionDecrementL().invoke(r, m, DATA)
         r.assertZeroed()
     }
 
@@ -212,7 +211,7 @@ class InstructionTests {
         // count up for each of BC, DE, HL, SP
         for (i in 1..max.toInt()) {
             assertEquals((i - 1).toUShort(), r.BC())
-            InstructionIncrementBC().invoke(r, m, NO_DATA)
+            InstructionIncrementBC().invoke(r, m, DATA)
             assertEquals(i.toUShort(), r.BC())
             assertEquals(zero, r.DE())
             assertEquals(zero, r.HL())
@@ -220,7 +219,7 @@ class InstructionTests {
         }
         for (i in 1..max.toInt()) {
             assertEquals((i - 1).toUShort(), r.DE())
-            InstructionIncrementDE().invoke(r, m, NO_DATA)
+            InstructionIncrementDE().invoke(r, m, DATA)
             assertEquals(i.toUShort(), r.DE())
             assertEquals(max, r.BC())
             assertEquals(zero, r.HL())
@@ -228,7 +227,7 @@ class InstructionTests {
         }
         for (i in 1..max.toInt()) {
             assertEquals((i - 1).toUShort(), r.HL())
-            InstructionIncrementHL().invoke(r, m, NO_DATA)
+            InstructionIncrementHL().invoke(r, m, DATA)
             assertEquals(i.toUShort(), r.HL())
             assertEquals(max, r.BC())
             assertEquals(max, r.DE())
@@ -236,7 +235,7 @@ class InstructionTests {
         }
         for (i in 1..max.toInt()) {
             assertEquals((i - 1).toUShort(), r.SP)
-            InstructionIncrementSP().invoke(r, m, NO_DATA)
+            InstructionIncrementSP().invoke(r, m, DATA)
             assertEquals(i.toUShort(), r.SP)
             assertEquals(max, r.BC())
             assertEquals(max, r.DE())
@@ -245,7 +244,7 @@ class InstructionTests {
         // count down for each of BC, DE, HL, SP
         for (i in 1..max.toInt()) {
             assertEquals((max.toInt() - i + 1).toUShort(), r.BC())
-            InstructionDecrementBC().invoke(r, m, NO_DATA)
+            InstructionDecrementBC().invoke(r, m, DATA)
             assertEquals((max.toInt() - i).toUShort(), r.BC())
             assertEquals(max, r.DE())
             assertEquals(max, r.HL())
@@ -253,7 +252,7 @@ class InstructionTests {
         }
         for (i in 1..max.toInt()) {
             assertEquals((max.toInt() - i + 1).toUShort(), r.DE())
-            InstructionDecrementDE().invoke(r, m, NO_DATA)
+            InstructionDecrementDE().invoke(r, m, DATA)
             assertEquals((max.toInt() - i).toUShort(), r.DE())
             assertEquals(zero, r.BC())
             assertEquals(max, r.HL())
@@ -261,7 +260,7 @@ class InstructionTests {
         }
         for (i in 1..max.toInt()) {
             assertEquals((max.toInt() - i + 1).toUShort(), r.HL())
-            InstructionDecrementHL().invoke(r, m, NO_DATA)
+            InstructionDecrementHL().invoke(r, m, DATA)
             assertEquals((max.toInt() - i).toUShort(), r.HL())
             assertEquals(zero, r.BC())
             assertEquals(zero, r.DE())
@@ -269,7 +268,7 @@ class InstructionTests {
         }
         for (i in 1..max.toInt()) {
             assertEquals((max.toInt() - i + 1).toUShort(), r.SP)
-            InstructionDecrementSP().invoke(r, m, NO_DATA)
+            InstructionDecrementSP().invoke(r, m, DATA)
             assertEquals((max.toInt() - i).toUShort(), r.SP)
             assertEquals(zero, r.BC())
             assertEquals(zero, r.DE())

@@ -10,7 +10,7 @@ interface Instruction : (Registers, Memory, Collection<UByte>) -> Unit {
 class InstructionNOOP(): Instruction {
     override val size: UShort = 1u
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
-        // NOOP
+        assert(4 == immediateData.size)
     }
 }
 
@@ -19,9 +19,10 @@ interface InstructionLoadLiteral: Instruction {
 
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
         val targetRegisters = registersToLoad(registers)
-        assert(immediateData.size >= targetRegisters.size)
+        assert(targetRegisters.size <= 3)
+        assert(immediateData.size == 4)
         targetRegisters.forEachIndexed { index, register ->
-            register.setter.call(immediateData.toList().get(index))
+            register.setter.call(immediateData.toList()[index + 1])
         }
     }
 }

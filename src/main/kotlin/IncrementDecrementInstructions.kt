@@ -3,6 +3,7 @@ import kotlin.reflect.KMutableProperty
 class InstructionIncrementBC: Instruction {
     override val size: UShort = 1u
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         registers.setBC(
             registers.BC().inc()
         )
@@ -12,6 +13,7 @@ class InstructionIncrementBC: Instruction {
 class InstructionIncrementDE: Instruction {
     override val size: UShort = 1u
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         registers.setDE(
             registers.DE().inc()
         )
@@ -21,6 +23,7 @@ class InstructionIncrementDE: Instruction {
 class InstructionIncrementHL: Instruction {
     override val size: UShort = 1u
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         registers.setHL(
             registers.HL().inc()
         )
@@ -37,6 +40,7 @@ class InstructionIncrementSP: Instruction {
 class InstructionDecrementBC: Instruction {
     override val size: UShort = 1u
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         registers.setBC(
             registers.BC().dec()
         )
@@ -55,6 +59,7 @@ class InstructionDecrementDE: Instruction {
 class InstructionDecrementHL: Instruction {
     override val size: UShort = 1u
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         registers.setHL(
             registers.HL().dec()
         )
@@ -74,6 +79,7 @@ interface InstructionIncrementByteRegister: Instruction {
 
     fun registerToIncrement(registers: Registers): KMutableProperty<UByte>
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         val targetRegister = registerToIncrement(registers)
         val currentValue = targetRegister.getter.call()
         targetRegister.setter.call(currentValue.inc())
@@ -118,6 +124,7 @@ interface InstructionDecrementByteRegister: Instruction {
 
     fun registerToDecrement(registers: Registers): KMutableProperty<UByte>
     override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+        assert(4 == immediateData.size)
         val targetRegister = registerToDecrement(registers)
         val currentValue = targetRegister.getter.call()
         targetRegister.setter.call(currentValue.dec())
