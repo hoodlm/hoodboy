@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     }
 
     println("Successfully read ROM ($bytesRead bytes) into memory; starting up the CPU now!")
-    val cpu = CPU(Registers(), memory, GameBoyInstructionInterpreter(), continueOnFatals = true)
+    val cpu = CPU(Registers(), memory, GameBoyInstructionInterpreter(), continueOnFatals = false)
 
     while(true) {
         cpu.fetchAndRunNextInstruction()

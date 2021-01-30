@@ -58,13 +58,13 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x3Cu -> InstructionIncrementA()
             0x3Du -> InstructionDecrementA()
             else -> {
-                throw RuntimeException("8-bit opcode $opcode is not yet implemented")
+                throw RuntimeException("8-bit opcode ${opcode.toHexString()} is not yet implemented")
             }
         }
     }
 
     private fun interpret16BitOpCode(opcode: UByte): Instruction {
-        throw RuntimeException("16-bit opcode $BIT16_OPCODE_PREFIX $opcode is not yet implemented")
+        throw RuntimeException("16-bit opcode $BIT16_OPCODE_PREFIX ${opcode.toHexString()} is not yet implemented")
     }
 }
 

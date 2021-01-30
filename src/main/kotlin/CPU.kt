@@ -23,7 +23,7 @@ class CPU(private val registers: Registers,
         val opcode = Pair(bytes[0], bytes[1])
         try {
             instructionInterpreter.interpret(opcode).also { instruction ->
-                println("Executing instruction: ${opcode} / ${instruction.javaClass}")
+                println("Executing instruction ${instruction.javaClass} / ${bytes.toHexString()}")
                 registers.PC = (registers.PC + instruction.size).toUShort()
                 instruction.invoke(registers, memory, bytes)
                 println("Register state -> ${registers.dumpRegisters()}")
