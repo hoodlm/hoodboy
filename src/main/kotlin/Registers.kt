@@ -73,6 +73,8 @@ class Registers {
     }
 
     fun dumpRegisters(): String {
-        return "A=$A, F=$F, B=$B, C=$C, D=$D, E=$E, H=$H, L=$L, SP=$SP, PC=$PC"
+        return "A=${A.toHexString()}, F=${F.toHexString()}, B=${B.toHexString()}, " +
+            "C=${C.toHexString()}, D=${D.toHexString()}, E=${E.toHexString()}, " +
+            "H=${H.toHexString()}, L=${L.toHexString()}, SP=${SP.toHexString()}, PC=${PC.toHexString()}"
     }
 }
