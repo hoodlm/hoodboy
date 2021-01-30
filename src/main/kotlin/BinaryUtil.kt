@@ -26,6 +26,6 @@ fun Pair<UByte, UByte>.toHexString(): String {
 
 fun List<UByte>.toHexString(): String {
     return "0x" + this.map {
-        "%x".format(it.toInt())
+        "%02x".format(it.toInt())
     }.joinToString("")
 }

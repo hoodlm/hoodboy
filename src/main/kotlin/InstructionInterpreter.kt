@@ -53,6 +53,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x2Bu -> InstructionDecrementHL()
             0x2Cu -> InstructionIncrementL()
             0x2Du -> InstructionDecrementL()
+            0x31u -> InstructionLoadSPd16()
             0x33u -> InstructionIncrementSP()
             0x3Bu -> InstructionDecrementSP()
             0x3Cu -> InstructionIncrementA()

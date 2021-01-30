@@ -12,10 +12,10 @@ class InstructionTests {
     val BYTE_1: UByte = 0x22u
     val BYTE_2: UByte = 0x33u
     val BYTE_3: UByte = 0x44u
-    val DATA: Collection<UByte> = listOf(BYTE_0, BYTE_1, BYTE_2, BYTE_3)
+    val DATA: List<UByte> = listOf(BYTE_0, BYTE_1, BYTE_2, BYTE_3)
 
-    val NO_DATA: Collection<UByte> = setOf()
-    val ONE_BYTE_DATA: Collection<UByte> = setOf(BYTE_1)
+    val NO_DATA: List<UByte> = listOf()
+    val ONE_BYTE_DATA: List<UByte> = listOf(BYTE_1)
 
     @BeforeEach
     fun reset() {
@@ -102,6 +102,16 @@ class InstructionTests {
         // if we reset those two registers, all registers should be back to zero
         r.H = 0u
         r.L = 0u
+        r.assertZeroed()
+    }
+
+    @Test fun testLoadSP16dHappy() {
+        val instruction = InstructionLoadSPd16()
+        instruction.invoke(r, m, DATA)
+        val expectedShort: UShort = Pair(DATA[1], DATA[2]).toUShort()
+        assertEquals(r.SP, expectedShort)
+        // if we reset this register, all registers should be back to zero
+        r.SP = 0u
         r.assertZeroed()
     }
 

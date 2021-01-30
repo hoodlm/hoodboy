@@ -2,7 +2,7 @@ import kotlin.reflect.KMutableProperty
 
 class InstructionIncrementBC: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         registers.setBC(
             registers.BC().inc()
@@ -12,7 +12,7 @@ class InstructionIncrementBC: Instruction {
 
 class InstructionIncrementDE: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         registers.setDE(
             registers.DE().inc()
@@ -22,7 +22,7 @@ class InstructionIncrementDE: Instruction {
 
 class InstructionIncrementHL: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         registers.setHL(
             registers.HL().inc()
@@ -32,14 +32,14 @@ class InstructionIncrementHL: Instruction {
 
 class InstructionIncrementSP: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         registers.SP = registers.SP.inc()
     }
 }
 
 class InstructionDecrementBC: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         registers.setBC(
             registers.BC().dec()
@@ -49,7 +49,7 @@ class InstructionDecrementBC: Instruction {
 
 class InstructionDecrementDE: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         registers.setDE(
             registers.DE().dec()
         )
@@ -58,7 +58,7 @@ class InstructionDecrementDE: Instruction {
 
 class InstructionDecrementHL: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         registers.setHL(
             registers.HL().dec()
@@ -68,7 +68,7 @@ class InstructionDecrementHL: Instruction {
 
 class InstructionDecrementSP: Instruction {
     override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         registers.SP = registers.SP.dec()
     }
 }
@@ -78,7 +78,7 @@ interface InstructionIncrementByteRegister: Instruction {
         get() = 1u
 
     fun registerToIncrement(registers: Registers): KMutableProperty<UByte>
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         val targetRegister = registerToIncrement(registers)
         val currentValue = targetRegister.getter.call()
@@ -123,7 +123,7 @@ interface InstructionDecrementByteRegister: Instruction {
         get() = 1u
 
     fun registerToDecrement(registers: Registers): KMutableProperty<UByte>
-    override fun invoke(registers: Registers, memory: Memory, immediateData: Collection<UByte>) {
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
         val targetRegister = registerToDecrement(registers)
         val currentValue = targetRegister.getter.call()
