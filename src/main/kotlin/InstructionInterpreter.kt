@@ -46,6 +46,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x1Cu -> InstructionIncrementE()
             0x1Du -> InstructionDecrementE()
             0x21u -> InstructionLoadHLd16()
+            0x22u -> InstructionLoadAFromHLIncrement()
             0x23u -> InstructionIncrementHL()
             0x24u -> InstructionIncrementH()
             0x25u -> InstructionDecrementH()
@@ -54,6 +55,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x2Cu -> InstructionIncrementL()
             0x2Du -> InstructionDecrementL()
             0x31u -> InstructionLoadSPd16()
+            0x32u -> InstructionLoadAFromHLDecrement()
             0x33u -> InstructionIncrementSP()
             0x3Bu -> InstructionDecrementSP()
             0x3Cu -> InstructionIncrementA()
@@ -66,7 +68,8 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
     }
 
     private fun interpret16BitOpCode(opcode: UByte): Instruction {
-        throw RuntimeException("16-bit opcode $BIT16_OPCODE_PREFIX ${opcode.toHexString()} is not yet implemented")
+        val hexString = listOf(BIT16_OPCODE_PREFIX, opcode).toHexString()
+        throw RuntimeException("16-bit opcode $hexString is not yet implemented")
     }
 }
 
