@@ -1,6 +1,9 @@
 class Registers {
     companion object {
-        const val BITSHIFT_8: UShort = 0x0100u;
+        private const val Z_MASK: UByte = 0b1000_0000u
+        private const val N_MASK: UByte = 0b0100_0000u
+        private const val H_MASK: UByte = 0b0010_0000u
+        private const val C_MASK: UByte = 0b0001_0000u
     }
 
     var A: UByte = 0u;
@@ -58,6 +61,30 @@ class Registers {
         return Pair(this.H, this.L).toUShort()
     }
 
+    /* flag accessors/setters, in register F
+     * 7  6  5  4  3  2  1  0
+     * ----------------------
+     * Z  N  H  C  0  0  0  0
+     */
+    fun flagZ(): Boolean {
+        return checkFlag(Z_MASK)
+    }
+
+    fun flagN(): Boolean {
+        return checkFlag(N_MASK)
+    }
+
+    fun flagH(): Boolean {
+        return checkFlag(H_MASK)
+    }
+
+    fun flagC(): Boolean {
+        return checkFlag(C_MASK)
+    }
+
+    private fun checkFlag(mask: UByte): Boolean {
+        return F.and(mask).equals(mask)
+    }
 
     fun clear() {
         A  = 0u;
