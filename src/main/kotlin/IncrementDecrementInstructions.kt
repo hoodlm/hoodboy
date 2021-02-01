@@ -83,6 +83,10 @@ interface InstructionIncrementByteRegister: Instruction {
         val targetRegister = registerToIncrement(registers)
         val currentValue = targetRegister.getter.call()
         targetRegister.setter.call(currentValue.inc())
+
+        registers.setFlagN(false)
+        registers.setFlagZ(currentValue == UByte.MAX_VALUE)
+        registers.setFlagH(currentValue.inc().wasHalfCarried() && !currentValue.wasHalfCarried())
     }
 }
 

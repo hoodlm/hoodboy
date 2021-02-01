@@ -1,5 +1,4 @@
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.AssertionError
@@ -195,6 +194,35 @@ open class InstructionTests: InstructionTestBase() {
         assertEquals(one, r.L)
         InstructionDecrementL().invoke(r, m, DATA)
         r.assertZeroed()
+    }
+
+    @Test fun testIncrementDecrementSingleByteRegistersFlags() {
+        // H (Half-carry flag)
+        r.A = 0b00001111u
+        InstructionIncrementA().invoke(r, m, DATA)
+        assertTrue(r.flagH())
+        r.A = 0b01101111u
+        InstructionIncrementA().invoke(r, m, DATA)
+        assertTrue(r.flagH())
+        InstructionIncrementA().invoke(r, m, DATA)
+        assertFalse(r.flagH())
+
+        // Z is only set on overflow
+        // C is never touched
+        // N is always SET to false
+        for (x in 0u..0b1111_1110u) {
+            r.setFlagZ(true)
+            r.A = x.toUByte()
+            InstructionIncrementA().invoke(r, m, DATA)
+            assertFalse(r.flagC())
+            assertFalse(r.flagZ())
+            assertFalse(r.flagN())
+        }
+        // incrementing 0xFF and overflowing is the only way Z is set:
+        r.A = 0xFFu
+        InstructionIncrementA().invoke(r, m, DATA)
+        assertTrue(r.flagZ())
+        assertEquals(0u, r.A.toUInt())
     }
 
     @Test fun testIncrementDecrementDoubleRegisters() {

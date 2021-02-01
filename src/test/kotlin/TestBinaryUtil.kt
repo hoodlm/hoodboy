@@ -1,4 +1,4 @@
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -88,6 +88,29 @@ class TestBinaryUtil {
                 val actual: Pair<UByte, UByte> = Pair(x.toUByte(), y.toUByte())
                 assertEquals(actual, actual.toUShort().splitHighAndLowBits())
             }
+        }
+    }
+
+    @Test
+    fun testHalfCarryFlag() {
+        listOf(
+            0b0001_0000u,
+            0b0001_1111u,
+            0b1111_1111u,
+            0b1101_1011u,
+            0b0001_0001u
+        ).forEach {
+            assertTrue(it.toUByte().wasHalfCarried())
+        }
+
+        listOf(
+            0b0000_0000u,
+            0b0000_1111u,
+            0b1110_1111u,
+            0b1100_1011u,
+            0b0000_0001u
+        ).forEach {
+            assertFalse(it.toUByte().wasHalfCarried())
         }
     }
 }
