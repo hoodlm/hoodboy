@@ -1,5 +1,4 @@
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -11,7 +10,7 @@ class FlagRegisterTests {
         r.clear()
     }
 
-    @Test fun testAllZeroAllOne() {
+    @Test fun testAllZeroAllOneGet() {
         r.F = 0x00u
         assertFalse(r.flagZ())
         assertFalse(r.flagN())
@@ -24,7 +23,7 @@ class FlagRegisterTests {
         assertTrue(r.flagC())
     }
 
-    @Test fun testFlagZ() {
+    @Test fun testGetFlagZ() {
         // Exhaustively testing
         assertFalse(r.flagZ())
         for (x in 0b0000_0000u..0b0111_1111u) {
@@ -37,7 +36,7 @@ class FlagRegisterTests {
         }
     }
 
-    @Test fun testFlagN() {
+    @Test fun testGetFlagN() {
         // Exhaustively testing
         assertFalse(r.flagZ())
         for (x in 0b0000_0000u..0b0011_1111u) {
@@ -62,7 +61,7 @@ class FlagRegisterTests {
         }
     }
 
-    @Test fun testFlagH() {
+    @Test fun testGetFlagH() {
         // Not exhaustively testing H
         assertFalse(r.flagH())
         for (x in 0b0000_0000u..0b0001_1111u) {
@@ -82,7 +81,7 @@ class FlagRegisterTests {
         }
     }
 
-    @Test fun testFlagC() {
+    @Test fun testGetFlagC() {
         // Not exhaustively testing C
         assertFalse(r.flagH())
         for (x in 0b0000_0000u..0b0000_1111u) {
@@ -93,12 +92,114 @@ class FlagRegisterTests {
         for (x in 0b1110_0000u..0b1110_1111u) {
             println("phase 2 $x")
             r.F = x.toUByte()
-            assertTrue(r.flagC(), "should be FALSE for $x")
+            assertFalse(r.flagC(), "should be FALSE for $x")
         }
         for (x in 0b0101_0000u..0b0101_1111u) {
             println("phase 3 $x")
             r.F = x.toUByte()
             assertTrue(r.flagC(), "should be TRUE for $x")
         }
+    }
+
+    @Test fun testSetters() {
+        r.setFlagZ(true)
+        assertEquals(0b1000_0000u, r.F.toUInt())
+        r.setFlagN(true)
+        assertEquals(0b1100_0000u, r.F.toUInt())
+        r.setFlagH(true)
+        assertEquals(0b1110_0000u, r.F.toUInt())
+        r.setFlagC(true)
+        assertEquals(0b1111_0000u, r.F.toUInt())
+
+        // Should be NOOPs
+        r.setFlagZ(true)
+        assertEquals(0b1111_0000u, r.F.toUInt())
+        r.setFlagN(true)
+        assertEquals(0b1111_0000u, r.F.toUInt())
+        r.setFlagH(true)
+        assertEquals(0b1111_0000u, r.F.toUInt())
+        r.setFlagC(true)
+        assertEquals(0b1111_0000u, r.F.toUInt())
+
+        r.setFlagH(false)
+        assertEquals(0b1101_0000u, r.F.toUInt())
+        r.setFlagZ(false)
+        assertEquals(0b0101_0000u, r.F.toUInt())
+        r.setFlagN(false)
+        assertEquals(0b0001_0000u, r.F.toUInt())
+        r.setFlagC(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+
+        // Should be NOOPs
+        r.setFlagH(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+        r.setFlagZ(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+        r.setFlagN(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+        r.setFlagC(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+
+        // Check that lower bits aren't affected
+        r.F = 0b0000_1111u
+        r.setFlagH(false)
+        r.setFlagZ(false)
+        r.setFlagN(false)
+        r.setFlagC(false)
+        assertEquals(0b0000_1111u, r.F.toUInt())
+    }
+
+    @Test fun testFlagSetterIdempotent() {
+        r.setFlagZ(true)
+        assertEquals(0b1000_0000u, r.F.toUInt())
+        r.setFlagZ(true)
+        r.setFlagZ(true)
+        assertEquals(0b1000_0000u, r.F.toUInt())
+        r.setFlagZ(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+        r.setFlagZ(false)
+        r.setFlagZ(false)
+        assertEquals(0b0000_0000u, r.F.toUInt())
+    }
+
+    @Test fun testGetterSetterIntegTests() {
+        r.setAF(0xFFFFu)
+        assertTrue(r.flagZ())
+        assertTrue(r.flagH())
+        assertTrue(r.flagN())
+        assertTrue(r.flagC())
+
+        r.setFlagZ(false)
+        assertFalse(r.flagZ())
+        assertTrue(r.flagH())
+        assertTrue(r.flagN())
+        assertTrue(r.flagC())
+
+        r.setFlagN(false)
+        assertFalse(r.flagZ())
+        assertTrue(r.flagH())
+        assertFalse(r.flagN())
+        assertTrue(r.flagC())
+
+        r.setFlagH(false)
+        assertFalse(r.flagZ())
+        assertFalse(r.flagH())
+        assertFalse(r.flagN())
+        assertTrue(r.flagC())
+
+        r.setFlagC(false)
+        assertFalse(r.flagZ())
+        assertFalse(r.flagH())
+        assertFalse(r.flagN())
+        assertFalse(r.flagC())
+
+        r.setFlagC(true)
+        assertTrue(r.flagC())
+        r.setFlagH(true)
+        assertTrue(r.flagH())
+        r.setFlagZ(true)
+        assertTrue(r.flagZ())
+        r.setFlagN(true)
+        assertTrue(r.flagN())
     }
 }

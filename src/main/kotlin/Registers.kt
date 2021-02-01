@@ -86,6 +86,30 @@ class Registers {
         return F.and(mask).equals(mask)
     }
 
+    fun setFlagZ(on: Boolean) {
+        setFlag(on, Z_MASK)
+    }
+
+    fun setFlagN(on: Boolean) {
+        setFlag(on, N_MASK)
+    }
+
+    fun setFlagH(on: Boolean) {
+        setFlag(on, H_MASK)
+    }
+
+    fun setFlagC(on: Boolean) {
+        setFlag(on, C_MASK)
+    }
+
+    private fun setFlag(on: Boolean, mask: UByte) {
+        if (on) {
+            F = F.or(mask)
+        } else {
+            F = F.and(mask.inv())
+        }
+    }
+
     fun clear() {
         A  = 0u;
         B  = 0u;
