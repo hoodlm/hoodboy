@@ -1,13 +1,17 @@
 import java.io.File
-import java.lang.RuntimeException
+
+const val DEFAULT_PATH = "/home/hoodlm/Downloads/DMG_ROM.bin"
 
 fun main(args: Array<String>) {
     println("HELLO")
 
-    if (args.isEmpty()) {
-        throw RuntimeException("No args were provided; expected a ROM filepath as arg 0")
-    }
-    val path = args[0]
+    val path =
+        if (args.isEmpty()) {
+            println("No args were provided; using default path $DEFAULT_PATH")
+            DEFAULT_PATH
+        } else {
+            args[0]
+        }
     println("Loading ROM from $path")
     val rom = File(path).readBytes()
     println("Read ROM from $path; loading it into memory now")
