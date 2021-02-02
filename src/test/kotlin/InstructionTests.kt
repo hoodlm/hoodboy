@@ -196,7 +196,7 @@ open class InstructionTests: InstructionTestBase() {
         r.assertZeroed()
     }
 
-    @Test fun testIncrementDecrementSingleByteRegistersFlags() {
+    @Test fun testIncrementSingleByteRegistersFlags() {
         // H (Half-carry flag)
         r.A = 0b00001111u
         InstructionIncrementA().invoke(r, m, DATA)
@@ -223,6 +223,39 @@ open class InstructionTests: InstructionTestBase() {
         InstructionIncrementA().invoke(r, m, DATA)
         assertTrue(r.flagZ())
         assertEquals(0u, r.A.toUInt())
+    }
+
+    @Test fun testDecrementSingleByteRegistersFlags() {
+        // H (Half-carry flag)
+        r.A = 0b0000_1111u
+        InstructionDecrementA().invoke(r, m, DATA)
+        assertTrue(r.flagH()) /* remember, TRUE here means that no borrow happened */
+        r.A = 0b0001_0000u
+        InstructionDecrementA().invoke(r, m, DATA)
+        assertEquals(0b0000_1111u, r.A.toUInt())
+        assertFalse(r.flagH()) /* FALSE here means that borrow DID happen */
+
+        // Z is only set on result of zero
+        // C is never touched
+        // N is always SET to true
+        for (x in 2u..0xFFu) {
+            r.setFlagZ(true)
+            r.A = x.toUByte()
+            InstructionDecrementA().invoke(r, m, DATA)
+            assertFalse(r.flagC())
+            assertFalse(r.flagZ())
+            assertTrue(r.flagN())
+        }
+        // decrementing from zero (underflow) does not set Z, but does count as a CARRY
+        r.A = 0u
+        InstructionDecrementA().invoke(r, m, DATA)
+        assertEquals(UByte.MAX_VALUE, r.A)
+        assertFalse(r.flagZ())
+        assertFalse(r.flagH())
+
+        r.A = 1u
+        InstructionDecrementA().invoke(r, m, DATA)
+        assertTrue(r.flagZ())
     }
 
     @Test fun testIncrementDecrementDoubleRegisters() {

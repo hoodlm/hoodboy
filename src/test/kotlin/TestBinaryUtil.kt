@@ -92,7 +92,7 @@ class TestBinaryUtil {
     }
 
     @Test
-    fun testHalfCarryFlag() {
+    fun testHalfCarry() {
         listOf(
             0b0001_0000u,
             0b0001_1111u,

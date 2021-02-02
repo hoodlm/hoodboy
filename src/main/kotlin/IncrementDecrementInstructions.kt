@@ -131,7 +131,20 @@ interface InstructionDecrementByteRegister: Instruction {
         assert(4 == immediateData.size)
         val targetRegister = registerToDecrement(registers)
         val currentValue = targetRegister.getter.call()
-        targetRegister.setter.call(currentValue.dec())
+        val result = currentValue.dec()
+        targetRegister.setter.call(result)
+
+        registers.setFlagN(true)
+        registers.setFlagZ(result == UByte.MIN_VALUE)
+        // "Set if no borrow from bit 4."
+        // Examples:
+        //   0b0001_0000 -> 0b0000_1111 -> borrow
+        //   0b1111_0000 -> 0b1110_1111 -> borrow
+        //   0b0000_0010 -> 0b0000_0001 -> no borrow
+        //   0b0001_0011 -> 0b0001_0010 -> no borrow
+        // decrementing any number that ends in _0000 is going to result in a borrow.
+        // HALF_BORROW_MASK is 0b0000_1111
+        registers.setFlagH(currentValue.and(HALF_BORROW_MASK) != UByte.MIN_VALUE)
     }
 }
 
