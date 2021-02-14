@@ -68,8 +68,76 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
     }
 
     private fun interpret16BitOpCode(opcode: UByte): Instruction {
-        val hexString = listOf(BIT16_OPCODE_PREFIX, opcode).toHexString()
-        throw RuntimeException("16-bit opcode $hexString is not yet implemented")
+        return when (opcode.toUInt()) {
+            0x40u -> InstructionRegisterBitTest(0) { r -> r.B }
+            0x41u -> InstructionRegisterBitTest(0) { r -> r.C }
+            0x42u -> InstructionRegisterBitTest(0) { r -> r.D }
+            0x43u -> InstructionRegisterBitTest(0) { r -> r.E }
+            0x44u -> InstructionRegisterBitTest(0) { r -> r.H }
+            0x45u -> InstructionRegisterBitTest(0) { r -> r.L }
+            // 0x46
+            0x47u -> InstructionRegisterBitTest(0) { r -> r.A }
+            0x48u -> InstructionRegisterBitTest(1) { r -> r.B }
+            0x49u -> InstructionRegisterBitTest(1) { r -> r.C }
+            0x4Au -> InstructionRegisterBitTest(1) { r -> r.D }
+            0x4Bu -> InstructionRegisterBitTest(1) { r -> r.E }
+            0x4Cu -> InstructionRegisterBitTest(1) { r -> r.H }
+            0x4Du -> InstructionRegisterBitTest(1) { r -> r.L }
+            // 0x4E
+            0x4Fu -> InstructionRegisterBitTest(1) { r -> r.A }
+            0x50u -> InstructionRegisterBitTest(2) { r -> r.B }
+            0x51u -> InstructionRegisterBitTest(2) { r -> r.C }
+            0x52u -> InstructionRegisterBitTest(2) { r -> r.D }
+            0x53u -> InstructionRegisterBitTest(2) { r -> r.E }
+            0x54u -> InstructionRegisterBitTest(2) { r -> r.H }
+            0x55u -> InstructionRegisterBitTest(2) { r -> r.L }
+            // 0x56
+            0x57u -> InstructionRegisterBitTest(2) { r -> r.A }
+            0x58u -> InstructionRegisterBitTest(3) { r -> r.B }
+            0x59u -> InstructionRegisterBitTest(3) { r -> r.C }
+            0x5Au -> InstructionRegisterBitTest(3) { r -> r.D }
+            0x5Bu -> InstructionRegisterBitTest(3) { r -> r.E }
+            0x5Cu -> InstructionRegisterBitTest(3) { r -> r.H }
+            0x5Du -> InstructionRegisterBitTest(3) { r -> r.L }
+            // 0x5E
+            0x5Fu -> InstructionRegisterBitTest(3) { r -> r.A }
+            0x60u -> InstructionRegisterBitTest(4) { r -> r.B }
+            0x61u -> InstructionRegisterBitTest(4) { r -> r.C }
+            0x62u -> InstructionRegisterBitTest(4) { r -> r.D }
+            0x63u -> InstructionRegisterBitTest(4) { r -> r.E }
+            0x64u -> InstructionRegisterBitTest(4) { r -> r.H }
+            0x65u -> InstructionRegisterBitTest(4) { r -> r.L }
+            // 0x66
+            0x67u -> InstructionRegisterBitTest(4) { r -> r.A }
+            0x68u -> InstructionRegisterBitTest(5) { r -> r.B }
+            0x69u -> InstructionRegisterBitTest(5) { r -> r.C }
+            0x6Au -> InstructionRegisterBitTest(5) { r -> r.D }
+            0x6Bu -> InstructionRegisterBitTest(5) { r -> r.E }
+            0x6Cu -> InstructionRegisterBitTest(5) { r -> r.H }
+            0x6Du -> InstructionRegisterBitTest(5) { r -> r.L }
+            // 0x6E
+            0x6Fu -> InstructionRegisterBitTest(5) { r -> r.A }
+            0x70u -> InstructionRegisterBitTest(6) { r -> r.B }
+            0x71u -> InstructionRegisterBitTest(6) { r -> r.C }
+            0x72u -> InstructionRegisterBitTest(6) { r -> r.D }
+            0x73u -> InstructionRegisterBitTest(6) { r -> r.E }
+            0x74u -> InstructionRegisterBitTest(6) { r -> r.H }
+            0x75u -> InstructionRegisterBitTest(6) { r -> r.L }
+            // 0x76
+            0x77u -> InstructionRegisterBitTest(6) { r -> r.A }
+            0x78u -> InstructionRegisterBitTest(7) { r -> r.B }
+            0x79u -> InstructionRegisterBitTest(7) { r -> r.C }
+            0x7Au -> InstructionRegisterBitTest(7) { r -> r.D }
+            0x7Bu -> InstructionRegisterBitTest(7) { r -> r.E }
+            0x7Cu -> InstructionRegisterBitTest(7) { r -> r.H }
+            0x7Du -> InstructionRegisterBitTest(7) { r -> r.L }
+            // 0x7E
+            0x7Fu -> InstructionRegisterBitTest(7) { r -> r.A }
+            else -> {
+                val hexString = listOf(BIT16_OPCODE_PREFIX, opcode).toHexString()
+                throw RuntimeException("16-bit opcode $hexString is not yet implemented")
+            }
+        }
     }
 }
 

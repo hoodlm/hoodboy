@@ -1,6 +1,16 @@
 val BITSHIFT_8: UShort = 0x0100u;
 val HALF_CARRY_MASK: UByte = 0b0001_0000u
-val HALF_BORROW_MASK: UByte = 0b0000_1111u
+
+val ONE_BIT_MASKS: List<UByte> = listOf(
+    0b0000_0001u, // bit 0
+    0b0000_0010u,
+    0b0000_0100u,
+    0b0000_1000u,
+    0b0001_0000u,
+    0b0010_0000u,
+    0b0100_0000u,
+    0b1000_0000u  // bit 7
+)
 
 fun UShort.splitHighAndLowBits(): Pair<UByte, UByte> {
     val lowBits: UByte = this.rem(BITSHIFT_8).toUByte()
