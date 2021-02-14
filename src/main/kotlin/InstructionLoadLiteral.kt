@@ -53,16 +53,17 @@ interface InstructionLoad16BitLiteralWideRegister: Instruction {
     override val size: UShort
         get() = 3u
 
-    fun registerToLoad(registers: Registers): KMutableProperty<UShort>
+    fun setNewRegisterValue(registers: Registers, newValue: UShort)
 
     override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        val targetRegister = registerToLoad(registers)
         assert(immediateData.size == 4)
         val bytes: Pair<UByte, UByte> = Pair(immediateData[1], immediateData[2])
-        targetRegister.setter.call(bytes.toUShort())
+        setNewRegisterValue(registers, bytes.toUShort())
     }
 }
 
 class InstructionLoadSPd16(): InstructionLoad16BitLiteralWideRegister {
-    override fun registerToLoad(registers: Registers) = registers::SP
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) {
+        registers.setSP(newValue)
+    }
 }

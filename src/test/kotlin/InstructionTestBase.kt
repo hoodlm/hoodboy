@@ -24,14 +24,19 @@ open class InstructionTestBase {
     }
 
     fun Registers.assertZeroed() {
+        this.assertZeroedIgnoreFlags()
+        assertEquals(this.F.toUInt(), 0u)
+    }
+
+    fun Registers.assertZeroedIgnoreFlags() {
         val zeroByte: UByte = 0u
         val zeroShort: UShort = 0u
         listOf(
-            this.A, this.B, this.C, this.D, this.E, this.F, this.H, this.L
+            this.A, this.B, this.C, this.D, this.E, this.H, this.L
         ).forEach { bit8Register ->
             assertEquals(zeroByte, bit8Register, "Registers not zeroed: ${this.dumpRegisters()}")
         }
-        listOf(this.PC, this.SP, this.BC(), this.DE(), this.AF(), this.HL()).forEach { bit16Register ->
+        listOf(this.PC(), this.SP(), this.BC(), this.DE(), this.HL()).forEach { bit16Register ->
             assertEquals(zeroShort, bit16Register, "Registers not zeroed: ${this.dumpRegisters()}")
         }
     }

@@ -1,76 +1,79 @@
 import kotlin.reflect.KMutableProperty
 
-class InstructionIncrementBC: Instruction {
-    override val size: UShort = 1u
+interface InstructionIncrementTwoByteRegister: Instruction {
+    override val size: UShort
+        get() = 1u
+
+    fun currentRegisterValue(registers: Registers): UShort
+    fun setNewRegisterValue(registers: Registers, newValue: UShort)
+
     override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
-        registers.setBC(
-            registers.BC().inc()
-        )
+        val currentValue = currentRegisterValue(registers)
+        setNewRegisterValue(registers, currentValue.inc())
+
+        registers.setFlagN(false)
+        registers.setFlagZ(currentValue == UShort.MAX_VALUE)
+        registers.setFlagH(wasHalfCarried(currentValue, currentValue.inc()))
     }
 }
 
-class InstructionIncrementDE: Instruction {
-    override val size: UShort = 1u
+class InstructionIncrementBC: InstructionIncrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.BC()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setBC(newValue)
+}
+
+class InstructionIncrementDE: InstructionIncrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.DE()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setDE(newValue)
+}
+
+class InstructionIncrementHL: InstructionIncrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.HL()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setHL(newValue)
+}
+
+class InstructionIncrementSP: InstructionIncrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.SP()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setSP(newValue)
+}
+
+interface InstructionDecrementTwoByteRegister: Instruction {
+    override val size: UShort
+        get() = 1u
+
+    fun currentRegisterValue(registers: Registers): UShort
+    fun setNewRegisterValue(registers: Registers, newValue: UShort)
+
     override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(4 == immediateData.size)
-        registers.setDE(
-            registers.DE().inc()
-        )
+        val currentValue = currentRegisterValue(registers)
+        setNewRegisterValue(registers, currentValue.dec())
+
+        registers.setFlagN(true)
+        registers.setFlagZ(currentValue == UShort.MAX_VALUE)
+        registers.setFlagH(wasHalfCarried(currentValue, currentValue.dec()))
     }
 }
 
-class InstructionIncrementHL: Instruction {
-    override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        assert(4 == immediateData.size)
-        registers.setHL(
-            registers.HL().inc()
-        )
-    }
+class InstructionDecrementBC: InstructionDecrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.BC()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setBC(newValue)
 }
 
-class InstructionIncrementSP: Instruction {
-    override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        registers.SP = registers.SP.inc()
-    }
+class InstructionDecrementDE: InstructionDecrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.DE()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setDE(newValue)
 }
 
-class InstructionDecrementBC: Instruction {
-    override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        assert(4 == immediateData.size)
-        registers.setBC(
-            registers.BC().dec()
-        )
-    }
+class InstructionDecrementHL: InstructionDecrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.HL()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setHL(newValue)
 }
 
-class InstructionDecrementDE: Instruction {
-    override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        registers.setDE(
-            registers.DE().dec()
-        )
-    }
-}
-
-class InstructionDecrementHL: Instruction {
-    override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        assert(4 == immediateData.size)
-        registers.setHL(
-            registers.HL().dec()
-        )
-    }
-}
-
-class InstructionDecrementSP: Instruction {
-    override val size: UShort = 1u
-    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
-        registers.SP = registers.SP.dec()
-    }
+class InstructionDecrementSP: InstructionDecrementTwoByteRegister {
+    override fun currentRegisterValue(registers: Registers): UShort = registers.SP()
+    override fun setNewRegisterValue(registers: Registers, newValue: UShort) = registers.setSP(newValue)
 }
 
 interface InstructionIncrementByteRegister: Instruction {
@@ -86,7 +89,7 @@ interface InstructionIncrementByteRegister: Instruction {
 
         registers.setFlagN(false)
         registers.setFlagZ(currentValue == UByte.MAX_VALUE)
-        registers.setFlagH(currentValue.inc().wasHalfCarried() && !currentValue.wasHalfCarried())
+        registers.setFlagH(wasHalfCarried(currentValue, currentValue.inc()))
     }
 }
 
@@ -136,15 +139,7 @@ interface InstructionDecrementByteRegister: Instruction {
 
         registers.setFlagN(true)
         registers.setFlagZ(result == UByte.MIN_VALUE)
-        // "Set if no borrow from bit 4."
-        // Examples:
-        //   0b0001_0000 -> 0b0000_1111 -> borrow
-        //   0b1111_0000 -> 0b1110_1111 -> borrow
-        //   0b0000_0010 -> 0b0000_0001 -> no borrow
-        //   0b0001_0011 -> 0b0001_0010 -> no borrow
-        // decrementing any number that ends in _0000 is going to result in a borrow.
-        // HALF_BORROW_MASK is 0b0000_1111
-        registers.setFlagH(currentValue.and(HALF_BORROW_MASK) != UByte.MIN_VALUE)
+        registers.setFlagH(wasHalfCarried(currentValue, currentValue.dec()))
     }
 }
 

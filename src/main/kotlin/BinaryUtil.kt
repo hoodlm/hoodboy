@@ -34,6 +34,27 @@ fun List<UByte>.toHexString(): String {
     }.joinToString("")
 }
 
-fun UByte.wasHalfCarried(): Boolean {
-    return this.and(HALF_CARRY_MASK).equals(HALF_CARRY_MASK)
+// "H=1 if and only if the upper nibble had to change as a result of the operation on the lower nibble"
+fun wasHalfCarried(before: UByte, after: UByte): Boolean {
+    // e.g.
+    //       0001_1110
+    //  XOR  0000_1111
+    //    -> 0001_0001
+    //  AND  0001_0000
+    //    -> 0001_0000
+    // vs.
+    //       0001_1110
+    //  XOR  0001_1111
+    //    -> 0000_0001
+    //  AND  0001_0000
+    //    -> 0000_0000
+    return before.xor(after).and(HALF_CARRY_MASK).equals(HALF_CARRY_MASK)
+}
+
+fun wasHalfCarried(before: UShort, after: UShort): Boolean {
+    // take last 8 bytes and call UByte version:
+    return wasHalfCarried(
+        before.and(0x00FFu).toUByte(),
+        after.and(0x00FFu).toUByte()
+    )
 }

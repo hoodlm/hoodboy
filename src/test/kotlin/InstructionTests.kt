@@ -90,9 +90,9 @@ open class InstructionTests: InstructionTestBase() {
         val instruction = InstructionLoadSPd16()
         instruction.invoke(r, m, DATA)
         val expectedShort: UShort = Pair(DATA[1], DATA[2]).toUShort()
-        assertEquals(r.SP, expectedShort)
+        assertEquals(r.SP(), expectedShort)
         // if we reset this register, all registers should be back to zero
-        r.SP = 0u
+        r.setSP(0u)
         r.assertZeroed()
     }
 
@@ -148,6 +148,12 @@ open class InstructionTests: InstructionTestBase() {
         for (i in 1..33) {
             InstructionDecrementH().invoke(r, m, DATA)
         }
+        assertTrue(r.flagZ()) // last operation zeroed a register
+        assertTrue(r.flagN()) // last operation was a subtraction
+        assertFalse(r.flagC())
+        assertFalse(r.flagH())
+        r.setFlagZ(false)
+        r.setFlagN(false)
         r.assertZeroed()
     }
 
@@ -158,42 +164,43 @@ open class InstructionTests: InstructionTestBase() {
         InstructionIncrementA().invoke(r, m, DATA)
         assertEquals(one, r.A)
         InstructionDecrementA().invoke(r, m, DATA)
-        r.assertZeroed()
+        assertTrue(r.flagZ())
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementB().invoke(r, m, DATA)
         assertEquals(one, r.B)
         InstructionDecrementB().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementC().invoke(r, m, DATA)
         assertEquals(one, r.C)
         InstructionDecrementC().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementD().invoke(r, m, DATA)
         assertEquals(one, r.D)
         InstructionDecrementD().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementE().invoke(r, m, DATA)
         assertEquals(one, r.E)
         InstructionDecrementE().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementF().invoke(r, m, DATA)
         assertEquals(one, r.F)
         InstructionDecrementF().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementH().invoke(r, m, DATA)
         assertEquals(one, r.H)
         InstructionDecrementH().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
 
         InstructionIncrementL().invoke(r, m, DATA)
         assertEquals(one, r.L)
         InstructionDecrementL().invoke(r, m, DATA)
-        r.assertZeroed()
+        r.assertZeroedIgnoreFlags()
     }
 
     @Test fun testIncrementSingleByteRegistersFlags() {
@@ -229,11 +236,11 @@ open class InstructionTests: InstructionTestBase() {
         // H (Half-carry flag)
         r.A = 0b0000_1111u
         InstructionDecrementA().invoke(r, m, DATA)
-        assertTrue(r.flagH()) /* remember, TRUE here means that no borrow happened */
+        assertFalse(r.flagH())
         r.A = 0b0001_0000u
         InstructionDecrementA().invoke(r, m, DATA)
         assertEquals(0b0000_1111u, r.A.toUInt())
-        assertFalse(r.flagH()) /* FALSE here means that borrow DID happen */
+        assertTrue(r.flagH())
 
         // Z is only set on result of zero
         // C is never touched
@@ -251,11 +258,32 @@ open class InstructionTests: InstructionTestBase() {
         InstructionDecrementA().invoke(r, m, DATA)
         assertEquals(UByte.MAX_VALUE, r.A)
         assertFalse(r.flagZ())
-        assertFalse(r.flagH())
+        assertTrue(r.flagH())
 
         r.A = 1u
         InstructionDecrementA().invoke(r, m, DATA)
         assertTrue(r.flagZ())
+    }
+
+    @Test fun testDecrementHalfCarryFlag() {
+        for (n in 0b0000_0001u..0b0000_1111u) {
+            r.A = n.toUByte()
+            InstructionDecrementA().invoke(r, m, DATA)
+            assertEquals(n.dec().toUByte(), r.A)
+            assertFalse(r.flagH())
+        }
+
+        for (n in 0b1111_0001u..0b1111_1111u) {
+            r.A = n.toUByte()
+            InstructionDecrementA().invoke(r, m, DATA)
+            assertEquals(n.dec().toUByte(), r.A)
+            assertFalse(r.flagH())
+        }
+
+        r.A = 0b0001_0000u
+        InstructionDecrementA().invoke(r, m, DATA)
+        assertEquals(0b0000_1111u.toUByte(), r.A)
+        assertTrue(r.flagH())
     }
 
     @Test fun testIncrementDecrementDoubleRegisters() {
@@ -268,7 +296,9 @@ open class InstructionTests: InstructionTestBase() {
             assertEquals(i.toUShort(), r.BC())
             assertEquals(zero, r.DE())
             assertEquals(zero, r.HL())
-            assertEquals(zero, r.SP)
+            assertEquals(zero, r.SP())
+            assertFalse(r.flagZ())
+            assertFalse(r.flagN())
         }
         for (i in 1..max.toInt()) {
             assertEquals((i - 1).toUShort(), r.DE())
@@ -276,7 +306,9 @@ open class InstructionTests: InstructionTestBase() {
             assertEquals(i.toUShort(), r.DE())
             assertEquals(max, r.BC())
             assertEquals(zero, r.HL())
-            assertEquals(zero, r.SP)
+            assertEquals(zero, r.SP())
+            assertFalse(r.flagZ())
+            assertFalse(r.flagN())
         }
         for (i in 1..max.toInt()) {
             assertEquals((i - 1).toUShort(), r.HL())
@@ -284,15 +316,19 @@ open class InstructionTests: InstructionTestBase() {
             assertEquals(i.toUShort(), r.HL())
             assertEquals(max, r.BC())
             assertEquals(max, r.DE())
-            assertEquals(zero, r.SP)
+            assertEquals(zero, r.SP())
+            assertFalse(r.flagZ())
+            assertFalse(r.flagN())
         }
         for (i in 1..max.toInt()) {
-            assertEquals((i - 1).toUShort(), r.SP)
+            assertEquals((i - 1).toUShort(), r.SP())
             InstructionIncrementSP().invoke(r, m, DATA)
-            assertEquals(i.toUShort(), r.SP)
+            assertEquals(i.toUShort(), r.SP())
             assertEquals(max, r.BC())
             assertEquals(max, r.DE())
             assertEquals(max, r.HL())
+            assertFalse(r.flagZ())
+            assertFalse(r.flagN())
         }
         // count down for each of BC, DE, HL, SP
         for (i in 1..max.toInt()) {
@@ -301,7 +337,9 @@ open class InstructionTests: InstructionTestBase() {
             assertEquals((max.toInt() - i).toUShort(), r.BC())
             assertEquals(max, r.DE())
             assertEquals(max, r.HL())
-            assertEquals(max, r.SP)
+            assertEquals(max, r.SP())
+            assertFalse(r.flagZ())
+            assertTrue(r.flagN())
         }
         for (i in 1..max.toInt()) {
             assertEquals((max.toInt() - i + 1).toUShort(), r.DE())
@@ -309,7 +347,9 @@ open class InstructionTests: InstructionTestBase() {
             assertEquals((max.toInt() - i).toUShort(), r.DE())
             assertEquals(zero, r.BC())
             assertEquals(max, r.HL())
-            assertEquals(max, r.SP)
+            assertEquals(max, r.SP())
+            assertFalse(r.flagZ())
+            assertTrue(r.flagN())
         }
         for (i in 1..max.toInt()) {
             assertEquals((max.toInt() - i + 1).toUShort(), r.HL())
@@ -317,17 +357,23 @@ open class InstructionTests: InstructionTestBase() {
             assertEquals((max.toInt() - i).toUShort(), r.HL())
             assertEquals(zero, r.BC())
             assertEquals(zero, r.DE())
-            assertEquals(max, r.SP)
+            assertEquals(max, r.SP())
+            assertFalse(r.flagZ())
+            assertTrue(r.flagN())
         }
         for (i in 1..max.toInt()) {
-            assertEquals((max.toInt() - i + 1).toUShort(), r.SP)
+            assertEquals((max.toInt() - i + 1).toUShort(), r.SP())
             InstructionDecrementSP().invoke(r, m, DATA)
-            assertEquals((max.toInt() - i).toUShort(), r.SP)
+            assertEquals((max.toInt() - i).toUShort(), r.SP())
             assertEquals(zero, r.BC())
             assertEquals(zero, r.DE())
             assertEquals(zero, r.HL())
+            assertFalse(r.flagZ())
+            assertTrue(r.flagN())
         }
         // finally make sure everything is zero
+        r.setFlagN(false)
+        r.setFlagZ(false)
         r.assertZeroed()
     }
 }

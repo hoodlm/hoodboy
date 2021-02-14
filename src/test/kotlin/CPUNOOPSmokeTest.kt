@@ -11,10 +11,10 @@ class CPUNOOPSmokeTest {
         for (byte in 0u..255u) {
             val instruction = byte.toUByte();
             val expectedPCBefore: UShort = instruction.toUShort()
-            assertEquals(expectedPCBefore, registers.PC)
+            assertEquals(expectedPCBefore, registers.PC())
             cpu.execInstruction(listOf(instruction, instruction, instruction, instruction))
             val expectedPCAfter: UShort = expectedPCBefore.inc()
-            assertEquals(expectedPCAfter, registers.PC)
+            assertEquals(expectedPCAfter, registers.PC())
         }
         memory.assertMemoryZeroes()
     }

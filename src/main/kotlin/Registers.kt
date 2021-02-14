@@ -14,8 +14,8 @@ class Registers {
     var F: UByte = 0u;
     var H: UByte = 0u;
     var L: UByte = 0u;
-    var SP: UShort = 0u;
-    var PC: UShort = 0u;
+    private var SP: UShort = 0u;
+    private var PC: UShort = 0u;
 
     fun setAF(af: UShort) {
         af.splitHighAndLowBits().also {
@@ -59,6 +59,22 @@ class Registers {
 
     fun HL(): UShort {
         return Pair(this.H, this.L).toUShort()
+    }
+
+    fun setSP(sp: UShort) {
+        this.SP = sp
+    }
+
+    fun SP(): UShort {
+        return SP
+    }
+
+    fun setPC(pc: UShort) {
+        this.PC = pc
+    }
+
+    fun PC(): UShort {
+        return PC
     }
 
     /* flag accessors/setters, in register F

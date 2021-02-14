@@ -93,24 +93,69 @@ class TestBinaryUtil {
 
     @Test
     fun testHalfCarry() {
-        listOf(
-            0b0001_0000u,
-            0b0001_1111u,
-            0b1111_1111u,
-            0b1101_1011u,
-            0b0001_0001u
-        ).forEach {
-            assertTrue(it.toUByte().wasHalfCarried())
+        // Any number and itself is NOT a half-carry
+        for (n in UByte.MIN_VALUE..UByte.MAX_VALUE) {
+            assertFalse(wasHalfCarried(n.toUByte(), n.toUByte()))
         }
 
-        listOf(
-            0b0000_0000u,
-            0b0000_1111u,
-            0b1110_1111u,
-            0b1100_1011u,
-            0b0000_0001u
-        ).forEach {
-            assertFalse(it.toUByte().wasHalfCarried())
+        // examples of half-carry FALSE
+        mapOf(
+            0b0001_0000u to 0b0001_0001u,
+            0b1111_1111u to 0b0101_0101u,
+            0b1110_1111u to 0b0110_1111u
+        ).forEach { (x, y) ->
+            // should be commutative, and work the same for a UByte or UShort pair:
+            assertFalse(wasHalfCarried(x.toUByte(), y.toUByte()))
+            assertFalse(wasHalfCarried(y.toUByte(), x.toUByte()))
+            assertFalse(wasHalfCarried(x.toUShort(), y.toUShort()))
+            assertFalse(wasHalfCarried(y.toUShort(), x.toUShort()))
+        }
+
+        // examples of half-carry TRUE
+        mapOf(
+            0b0001_0000u to 0b0000_0000u,
+            0b1111_0000u to 0b1110_1111u,
+            0b1110_1111u to 0b1111_1111u
+        ).forEach { (x, y) ->
+            // should be commutative, and work the same for a UByte or UShort pair:
+            assertTrue(wasHalfCarried(x.toUByte(), y.toUByte()))
+            assertTrue(wasHalfCarried(y.toUByte(), x.toUByte()))
+            assertTrue(wasHalfCarried(x.toUShort(), y.toUShort()))
+            assertTrue(wasHalfCarried(y.toUShort(), x.toUShort()))
+        }
+    }
+
+    @Test
+    fun testHalfCarry16bit() {
+        // Any number and itself is NOT a half-carry
+        for (n in UShort.MIN_VALUE..UShort.MAX_VALUE) {
+            assertFalse(wasHalfCarried(n.toUByte(), n.toUByte()))
+        }
+
+        // examples of half-carry FALSE
+        mapOf(
+            0b1111_0000_0001_0000u to 0b1111_1111_0001_0001u,
+            0b1111_0000_1111_1111u to 0b0000_0000_0101_0101u,
+            0b1010_0101_1110_1111u to 0b0000_0001_0110_1111u
+        ).forEach { (x, y) ->
+            // should be commutative, and work the same for a UByte or UShort pair:
+            assertFalse(wasHalfCarried(x.toUByte(), y.toUByte()))
+            assertFalse(wasHalfCarried(y.toUByte(), x.toUByte()))
+            assertFalse(wasHalfCarried(x.toUShort(), y.toUShort()))
+            assertFalse(wasHalfCarried(y.toUShort(), x.toUShort()))
+        }
+
+        // examples of half-carry TRUE
+        mapOf(
+            0b1111_0000_0001_0000u to 0b0000_0000_0000_0000u,
+            0b0101_1010_1111_0000u to 0b1111_1101_1110_1111u,
+            0b1111_1111_1110_1111u to 0b1111_1111_1111_1111u
+        ).forEach { (x, y) ->
+            // should be commutative, and work the same for a UByte or UShort pair:
+            assertTrue(wasHalfCarried(x.toUByte(), y.toUByte()))
+            assertTrue(wasHalfCarried(y.toUByte(), x.toUByte()))
+            assertTrue(wasHalfCarried(x.toUShort(), y.toUShort()))
+            assertTrue(wasHalfCarried(y.toUShort(), x.toUShort()))
         }
     }
 }

@@ -6,7 +6,7 @@ class CPU(private val registers: Registers,
           private val continueOnFatals: Boolean? = false) {
 
     fun fetchAndRunNextInstruction() {
-        val instructionAddress = registers.PC
+        val instructionAddress = registers.PC()
         println("Fetching instruction at address $instructionAddress")
         val data = listOf(
             memory.getByte((instructionAddress).toUShort()),
@@ -24,14 +24,16 @@ class CPU(private val registers: Registers,
         try {
             instructionInterpreter.interpret(opcode).also { instruction ->
                 println("Executing instruction ${instruction.javaClass} / ${bytes.toHexString()}")
-                registers.PC = (registers.PC + instruction.size).toUShort()
+                registers.setPC(
+                    (registers.PC() + instruction.size).toUShort())
                 instruction.invoke(registers, memory, bytes)
                 println("Register state -> ${registers.dumpRegisters()}")
             }
         } catch(x: Exception) {
             if (true == this.continueOnFatals) {
                 println(x)
-                registers.PC = registers.PC.inc()
+                registers.setPC(
+                    (registers.PC().inc()))
             } else {
                 throw x
             }
