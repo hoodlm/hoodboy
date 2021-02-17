@@ -5,9 +5,11 @@ class CPU(private val registers: Registers,
           private val instructionInterpreter: InstructionInterpreter,
           private val continueOnFatals: Boolean? = false) {
 
+    private var cycleCount = 0
+
     fun fetchAndRunNextInstruction() {
         val instructionAddress = registers.PC()
-        println("Fetching instruction at address $instructionAddress")
+        // println("Cycle ${++cycleCount}: Fetching instruction at address $instructionAddress")
         val data = listOf(
             memory.getByte((instructionAddress).toUShort()),
             memory.getByte((instructionAddress + 1u).toUShort()),
@@ -15,7 +17,6 @@ class CPU(private val registers: Registers,
             memory.getByte((instructionAddress + 3u).toUShort())
         )
         execInstruction(data)
-        sleep(10)
     }
 
     fun execInstruction(bytes: List<UByte>) {
@@ -23,11 +24,11 @@ class CPU(private val registers: Registers,
         val opcode = Pair(bytes[0], bytes[1])
         try {
             instructionInterpreter.interpret(opcode).also { instruction ->
-                println("Executing instruction ${instruction.javaClass} / ${bytes.toHexString()}")
+                // println("Executing instruction ${instruction.javaClass} / ${bytes.toHexString()}")
                 registers.setPC(
                     (registers.PC() + instruction.size).toUShort())
                 instruction.invoke(registers, memory, bytes)
-                println("Register state -> ${registers.dumpRegisters()}")
+                // println("Register state -> ${registers.dumpRegisters()}")
             }
         } catch(x: Exception) {
             if (true == this.continueOnFatals) {
