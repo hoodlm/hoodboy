@@ -18,16 +18,32 @@ interface InstructionLoad8BitLiteral: InstructionLoadLiteral {
         get() = 2u
 }
 
+class InstructionLoadAd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::A)
+}
+
 class InstructionLoadBd8(): InstructionLoad8BitLiteral {
     override fun registersToLoad(registers: Registers) = listOf(registers::B)
+}
+
+class InstructionLoadCd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::C)
 }
 
 class InstructionLoadDd8(): InstructionLoad8BitLiteral {
     override fun registersToLoad(registers: Registers) = listOf(registers::D)
 }
 
+class InstructionLoadEd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::E)
+}
+
 class InstructionLoadHd8(): InstructionLoad8BitLiteral {
     override fun registersToLoad(registers: Registers) = listOf(registers::H)
+}
+
+class InstructionLoadLd8(): InstructionLoad8BitLiteral {
+    override fun registersToLoad(registers: Registers) = listOf(registers::L)
 }
 
 

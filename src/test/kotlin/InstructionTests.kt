@@ -53,6 +53,42 @@ open class InstructionTests: InstructionTestBase() {
         r.assertZeroed()
     }
 
+    @Test fun testLoadAd8Happy() {
+        val instruction = InstructionLoadAd8()
+        instruction.invoke(r, m, DATA)
+        assertEquals(r.A, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.A = 0u
+        r.assertZeroed()
+    }
+
+    @Test fun testLoadLd8Happy() {
+        val instruction = InstructionLoadLd8()
+        instruction.invoke(r, m, DATA)
+        assertEquals(r.L, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.L = 0u
+        r.assertZeroed()
+    }
+
+    @Test fun testLoadEd8Happy() {
+        val instruction = InstructionLoadEd8()
+        instruction.invoke(r, m, DATA)
+        assertEquals(r.E, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.E = 0u
+        r.assertZeroed()
+    }
+
+    @Test fun testLoadCd8Happy() {
+        val instruction = InstructionLoadCd8()
+        instruction.invoke(r, m, DATA)
+        assertEquals(r.C, BYTE_1)
+        // if we reset this register, all registers should be back to zero
+        r.C = 0u
+        r.assertZeroed()
+    }
+
     @Test fun testLoadBC16dHappy() {
         val instruction = InstructionLoadBCd16()
         instruction.invoke(r, m, DATA)
