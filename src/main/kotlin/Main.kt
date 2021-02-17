@@ -3,8 +3,6 @@ import java.io.File
 const val DEFAULT_PATH = "/home/hoodlm/Downloads/DMG_ROM.bin"
 
 fun main(args: Array<String>) {
-    println("HELLO")
-
     val path =
         if (args.isEmpty()) {
             println("No args were provided; using default path $DEFAULT_PATH")

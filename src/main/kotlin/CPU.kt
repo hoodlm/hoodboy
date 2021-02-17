@@ -5,11 +5,12 @@ class CPU(private val registers: Registers,
           private val instructionInterpreter: InstructionInterpreter,
           private val continueOnFatals: Boolean? = false) {
 
-    private var cycleCount = 0
+    private var cycleCount: Long = 0
 
     fun fetchAndRunNextInstruction() {
+        ++cycleCount
         val instructionAddress = registers.PC()
-        // println("Cycle ${++cycleCount}: Fetching instruction at address $instructionAddress")
+        // println("Cycle ${cycleCount}: Fetching instruction at address $instructionAddress")
         val data = listOf(
             memory.getByte((instructionAddress).toUShort()),
             memory.getByte((instructionAddress + 1u).toUShort()),
@@ -36,6 +37,8 @@ class CPU(private val registers: Registers,
                 registers.setPC(
                     (registers.PC().inc()))
             } else {
+                println("Cycle $cycleCount: failed to execute at address ${registers.PC().toHexString()}:: ${bytes.toHexString()}")
+                println("Register state -> ${registers.dumpRegisters()}")
                 throw x
             }
         }
