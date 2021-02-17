@@ -129,6 +129,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             // 0x7E
             0x7Fu -> InstructionLoadRegisterToRegister({ it::A }, { it::A })
             0xAFu -> InstructionXorA()
+            0xE0u -> InstructionLoadAFromLiteral()
             0xE2u -> InstructionLoadAFromC()
             else -> {
                 throw RuntimeException("8-bit opcode ${opcode.toHexString()} is not yet implemented")

@@ -74,4 +74,20 @@ class InstructionLoadFromRegisterToMemoryTests: InstructionTestBase() {
         r.C = 0u
         r.assertZeroed()
     }
+
+    @Test
+    fun testInstructionLoadAFromLiteral() {
+        val instruction: Instruction = InstructionLoadAFromLiteral()
+        r.A = BYTE_3
+        for (i in 0x00u..0xFFu) {
+            val expectedDestAddress: UShort = (0xFF00u + i).toUShort()
+            assertEquals(BYTE_VALUE_ZERO, m.getByte(expectedDestAddress))
+            instruction.invoke(r, m, listOf(BYTE_0, i.toUByte(), BYTE_2, BYTE_3))
+            assertEquals(BYTE_3, m.getByte(expectedDestAddress))
+        }
+
+        // verify no other registers/flags were affected
+        r.A = 0u
+        r.assertZeroed()
+    }
 }
