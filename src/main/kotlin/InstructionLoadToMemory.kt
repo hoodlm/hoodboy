@@ -3,7 +3,7 @@ import kotlin.reflect.KMutableProperty
 interface InstructionLoadFromRegisterToMemory: Instruction {
     override val size: UShort
         get() = 1u
-    fun destinationAddressRegister(registers: Registers): () -> UShort
+    fun destinationAddress(registers: Registers): UShort
     fun valueRegister(registers: Registers): KMutableProperty<UByte>
     fun postInvoke(registers: Registers) {
         // Optional post-invoke code hook, e.g. for decrement/increment register instructions like LD (HL-) A
@@ -11,7 +11,7 @@ interface InstructionLoadFromRegisterToMemory: Instruction {
 
     override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
         assert(immediateData.size == 4)
-        val destinationAddress = destinationAddressRegister(registers).invoke()
+        val destinationAddress = destinationAddress(registers)
         val destinationValue = valueRegister(registers).getter.call()
         memory.putByte(destinationAddress, destinationValue)
         postInvoke(registers)
@@ -19,7 +19,7 @@ interface InstructionLoadFromRegisterToMemory: Instruction {
 }
 
 class InstructionLoadAFromHLDecrement: InstructionLoadFromRegisterToMemory {
-    override fun destinationAddressRegister(registers: Registers): () -> UShort = registers::HL
+    override fun destinationAddress(registers: Registers) = registers.HL()
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
     override fun postInvoke(registers: Registers) {
         registers.setHL(registers.HL().dec())
@@ -27,9 +27,17 @@ class InstructionLoadAFromHLDecrement: InstructionLoadFromRegisterToMemory {
 }
 
 class InstructionLoadAFromHLIncrement: InstructionLoadFromRegisterToMemory {
-    override fun destinationAddressRegister(registers: Registers): () -> UShort = registers::HL
+    override fun destinationAddress(registers: Registers) = registers.HL()
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
     override fun postInvoke(registers: Registers) {
         registers.setHL(registers.HL().inc())
     }
+}
+
+class InstructionLoadAFromC: InstructionLoadFromRegisterToMemory {
+    override fun destinationAddress(registers: Registers): UShort {
+        return (0xFF00u + registers.C).toUShort()
+    }
+
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
 }

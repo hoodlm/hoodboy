@@ -70,6 +70,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x3Du -> InstructionDecrementA()
             0x3Eu -> InstructionLoadAd8()
             0xAFu -> InstructionXorA()
+            0xE2u -> InstructionLoadAFromC()
             else -> {
                 throw RuntimeException("8-bit opcode ${opcode.toHexString()} is not yet implemented")
             }
