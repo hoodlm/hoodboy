@@ -4,6 +4,22 @@ import org.junit.jupiter.api.Test
 class InstructionLoadFromRegisterToMemoryTests: InstructionTestBase() {
 
     @Test
+    fun testHL() {
+        val instruction: Instruction = InstructionLoadAFromHL()
+        val address: UShort = 8000u
+        r.setHL(address)
+        r.A = BYTE_3
+        instruction.invoke(r, m, DATA)
+        assertEquals(BYTE_3, m.getByte(address))
+        // A and HL should be unaffected!
+        assertEquals(address, r.HL())
+        assertEquals(BYTE_3, r.A)
+        r.A = 0u
+        r.setHL(0u)
+        r.assertZeroed()
+    }
+
+    @Test
     fun testHL_Decrement() {
         val instruction: Instruction = InstructionLoadAFromHLDecrement()
         r.setHL(8000u)

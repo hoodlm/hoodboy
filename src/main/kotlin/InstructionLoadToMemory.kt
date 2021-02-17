@@ -18,6 +18,11 @@ interface InstructionLoadFromRegisterToMemory: Instruction {
     }
 }
 
+class InstructionLoadAFromHL: InstructionLoadFromRegisterToMemory {
+    override fun destinationAddress(registers: Registers) = registers.HL()
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
+}
+
 class InstructionLoadAFromHLDecrement: InstructionLoadFromRegisterToMemory {
     override fun destinationAddress(registers: Registers) = registers.HL()
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
