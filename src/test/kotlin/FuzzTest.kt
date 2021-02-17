@@ -13,7 +13,7 @@ class FuzzTest {
 
         val registers = Registers()
         val memory = Memory()
-        val cpu = CPU(registers, memory, GameBoyInstructionInterpreter())
+        val cpu = CPU(registers, memory, GameBoyInstructionInterpreter(), verbose = false)
 
         for (i in 0..runCount) {
             val bytes = r.nextUBytes(4)

@@ -3,7 +3,8 @@ import java.lang.Thread.sleep
 class CPU(private val registers: Registers,
           private val memory: Memory,
           private val instructionInterpreter: InstructionInterpreter,
-          private val continueOnFatals: Boolean? = false) {
+          private val continueOnFatals: Boolean? = false,
+          private val verbose: Boolean? = true) {
 
     private var cycleCount: Long = 0
 
@@ -37,8 +38,10 @@ class CPU(private val registers: Registers,
                 registers.setPC(
                     (registers.PC().inc()))
             } else {
-                println("Cycle $cycleCount: failed to execute at address ${registers.PC().toHexString()}:: ${bytes.toHexString()}")
-                println("Register state -> ${registers.dumpRegisters()}")
+                if (true == verbose) {
+                    println("Cycle $cycleCount: failed to execute at address ${registers.PC().toHexString()}:: ${bytes.toHexString()}")
+                    println("Register state -> ${registers.dumpRegisters()}")
+                }
                 throw x
             }
         }
