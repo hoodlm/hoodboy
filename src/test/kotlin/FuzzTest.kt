@@ -6,9 +6,10 @@ import kotlin.random.nextUBytes
 class FuzzTest {
     @Test
     fun randomInstructions() {
+        var extendedInstructionBias = 0.10 // 10% of the time, choose an extended instruction
         var successCount = 0
         val runCount = 500000
-        val seed = 20210105
+        val seed = 20210219
         val r = Random(seed)
 
         val registers = Registers()
@@ -17,6 +18,9 @@ class FuzzTest {
 
         for (i in 0..runCount) {
             val bytes = r.nextUBytes(4)
+            if (r.nextFloat() < extendedInstructionBias) {
+                bytes[0] = 0xCBu
+            }
             try {
                 cpu.execInstruction(listOf(bytes[0], bytes[1], bytes[2], bytes[3]))
                 successCount += 1

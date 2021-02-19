@@ -57,9 +57,6 @@ interface InstructionRotateLeft: InstructionRotateBase {
         }
     }
 
-    /**
-     * Pass the current register value; will set carry flag depending on instruction type.
-     */
     override fun setCarryFlag(input: UByte, r: Registers) {
         // Carry flag will contain the old value of bit 7:
         r.setFlagC(BYTE_VALUE_ZERO != input.and(0b1000_0000u))
@@ -77,9 +74,6 @@ interface InstructionRotateLeft: InstructionRotateBase {
         return rotated.toUByte()
     }
 
-    /**
-     * Set N/Z/H flags depending on instruction type.
-     */
     override fun setFinalFlags(result: UByte, r: Registers) {
         if (BYTE_VALUE_ZERO == result) {
             r.setFlagZ(true)
@@ -89,7 +83,6 @@ interface InstructionRotateLeft: InstructionRotateBase {
         r.setFlagN(false)
         r.setFlagH(false)
     }
-
 }
 
 class InstructionRotateLeftA: InstructionRotateLeft {
@@ -135,6 +128,90 @@ class InstructionRotateLeftH: InstructionRotateLeft {
 }
 
 class InstructionRotateLeftL: InstructionRotateLeft {
+    override fun getValue(r: Registers) = r.L
+    override fun setValue(r: Registers, v: UByte) {
+        r.L = v
+    }
+}
+
+interface InstructionRotateRight: InstructionRotateBase {
+    override fun handlePreviousCarryFlag(value: UByte, previousFlag: Boolean): UByte {
+        return if (previousFlag) {
+            // "The previous value of the carry flag are copied to bit 7 of the register"
+            value.xor(0b1000_0000u)
+        } else {
+            value
+        }
+    }
+
+    override fun setCarryFlag(input: UByte, r: Registers) {
+        // Carry flag will contain the old value of bit 0:
+        r.setFlagC(BYTE_VALUE_ZERO != input.and(0b0000_0001u))
+    }
+
+    override fun doRotation(input: UByte): UByte {
+        // Clear bit 0:
+        val preRotate = input.and(0b1111_1110u)
+        // Then a rightshift is just a division by 2.
+        val rotated = preRotate / 2u
+        return rotated.toUByte()
+    }
+
+    override fun setFinalFlags(result: UByte, r: Registers) {
+        if (BYTE_VALUE_ZERO == result) {
+            r.setFlagZ(true)
+        } else {
+            r.setFlagZ(false)
+        }
+        r.setFlagN(false)
+        r.setFlagH(false)
+    }
+}
+
+
+class InstructionRotateRightA: InstructionRotateRight {
+    override fun getValue(r: Registers) = r.A
+    override fun setValue(r: Registers, v: UByte) {
+        r.A = v
+    }
+}
+
+class InstructionRotateRightB: InstructionRotateRight {
+    override fun getValue(r: Registers) = r.B
+    override fun setValue(r: Registers, v: UByte) {
+        r.B = v
+    }
+}
+
+class InstructionRotateRightC: InstructionRotateRight {
+    override fun getValue(r: Registers) = r.C
+    override fun setValue(r: Registers, v: UByte) {
+        r.C = v
+    }
+}
+
+class InstructionRotateRightD: InstructionRotateRight {
+    override fun getValue(r: Registers) = r.D
+    override fun setValue(r: Registers, v: UByte) {
+        r.D = v
+    }
+}
+
+class InstructionRotateRightE: InstructionRotateRight {
+    override fun getValue(r: Registers) = r.E
+    override fun setValue(r: Registers, v: UByte) {
+        r.E = v
+    }
+}
+
+class InstructionRotateRightH: InstructionRotateRight {
+    override fun getValue(r: Registers) = r.H
+    override fun setValue(r: Registers, v: UByte) {
+        r.H = v
+    }
+}
+
+class InstructionRotateRightL: InstructionRotateRight {
     override fun getValue(r: Registers) = r.L
     override fun setValue(r: Registers, v: UByte) {
         r.L = v

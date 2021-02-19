@@ -167,6 +167,14 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x15u -> InstructionRotateLeftL()
             // 0x16u
             0x17u -> InstructionRotateLeftA()
+            0x18u -> InstructionRotateRightB()
+            0x19u -> InstructionRotateRightC()
+            0x1Au -> InstructionRotateRightD()
+            0x1Bu -> InstructionRotateRightE()
+            0x1Cu -> InstructionRotateRightH()
+            0x1Du -> InstructionRotateRightL()
+            // 0x1Eu
+            0x1Fu -> InstructionRotateRightA()
             0x40u -> InstructionRegisterBitTest(0) { r -> r.B }
             0x41u -> InstructionRegisterBitTest(0) { r -> r.C }
             0x42u -> InstructionRegisterBitTest(0) { r -> r.D }
