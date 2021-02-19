@@ -139,6 +139,8 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x7Eu -> InstructionLoadFromAToHL()
             0x7Fu -> InstructionLoadRegisterToRegister({ it::A }, { it::A })
             0xAFu -> InstructionXorA()
+            0xC9u -> InstructionReturn()
+            0xCDu -> InstructionCallLiteralAddress()
             0xE0u -> InstructionLoadAFromLiteral()
             0xE2u -> InstructionLoadAFromC()
             else -> {

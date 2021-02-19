@@ -1,4 +1,4 @@
-import kotlin.reflect.KMutableProperty
+import java.lang.RuntimeException
 
 interface Instruction : (Registers, Memory, List<UByte>) -> Unit {
     /**
