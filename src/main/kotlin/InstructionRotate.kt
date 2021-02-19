@@ -47,22 +47,7 @@ interface InstructionRotateBase: Instruction {
     }
 }
 
-// Base implementation for RL and RR instructions
-interface InstructionRotateLeftBase: InstructionRotateBase {
-    override fun doRotation(input: UByte): UByte {
-        // Clear bit 7:
-        val preRotate = input.and(0b0111_1111u)
-        // Assertion is to make sure we don't overflow:
-        assert(preRotate < 0b1000_0000u)
-        // Then a leftshift is just a multiplication by 2.
-        val rotated = preRotate * 2u
-        // Again, an assertion, to make sure there was no overflow:
-        assert(rotated <= 0xFFu)
-        return rotated.toUByte()
-    }
-}
-
-interface InstructionRotateLeft: InstructionRotateLeftBase {
+interface InstructionRotateLeft: InstructionRotateBase {
     override fun handlePreviousCarryFlag(value: UByte, previousFlag: Boolean): UByte {
         return if (previousFlag) {
             // "The previous value of the carry flag are copied to bit 0 of the register"
