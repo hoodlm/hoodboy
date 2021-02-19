@@ -159,6 +159,14 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
 
     private fun interpret16BitOpCode(opcode: UByte): Instruction {
         return when (opcode.toUInt()) {
+            0x10u -> InstructionRotateLeftB()
+            0x11u -> InstructionRotateLeftC()
+            0x12u -> InstructionRotateLeftD()
+            0x13u -> InstructionRotateLeftE()
+            0x14u -> InstructionRotateLeftH()
+            0x15u -> InstructionRotateLeftL()
+            // 0x16u
+            0x17u -> InstructionRotateLeftA()
             0x40u -> InstructionRegisterBitTest(0) { r -> r.B }
             0x41u -> InstructionRegisterBitTest(0) { r -> r.C }
             0x42u -> InstructionRegisterBitTest(0) { r -> r.D }

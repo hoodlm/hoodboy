@@ -8,7 +8,6 @@ open class InstructionTestBase {
     val r = Registers()
     val m = Memory()
 
-    val BYTE_VALUE_ZERO: UByte = 0x00u
     val BYTE_0: UByte = 0x11u
     val BYTE_1: UByte = 0x22u
     val BYTE_2: UByte = 0x33u

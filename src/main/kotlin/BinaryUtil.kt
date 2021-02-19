@@ -1,5 +1,6 @@
 val BITSHIFT_8: UShort = 0x0100u;
 val HALF_CARRY_MASK: UByte = 0b0001_0000u
+val BYTE_VALUE_ZERO: UByte = 0x00u
 
 val ONE_BIT_MASKS: List<UByte> = listOf(
     0b0000_0001u, // bit 0
