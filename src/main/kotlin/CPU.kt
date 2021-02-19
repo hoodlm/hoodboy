@@ -26,11 +26,11 @@ class CPU(private val registers: Registers,
         val opcode = Pair(bytes[0], bytes[1])
         try {
             instructionInterpreter.interpret(opcode).also { instruction ->
-                // println("Executing instruction ${instruction.javaClass} / ${bytes.toHexString()}")
+                println("Cycle $cycleCount: Executing instruction ${instruction.javaClass} / ${bytes.toHexString()}")
                 registers.setPC(
                     (registers.PC() + instruction.size).toUShort())
                 instruction.invoke(registers, memory, bytes)
-                // println("Register state -> ${registers.dumpRegisters()}")
+                println("Cycle $cycleCount: Register state -> ${registers.dumpRegisters()}")
             }
         } catch(x: Exception) {
             if (true == this.continueOnFatals) {
