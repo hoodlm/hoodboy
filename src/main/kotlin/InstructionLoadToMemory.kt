@@ -26,6 +26,30 @@ class InstructionLoadFromAToHL: InstructionLoadFromRegisterToHL {
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
 }
 
+class InstructionLoadFromBToHL: InstructionLoadFromRegisterToHL {
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::B
+}
+
+class InstructionLoadFromCToHL: InstructionLoadFromRegisterToHL {
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::C
+}
+
+class InstructionLoadFromDToHL: InstructionLoadFromRegisterToHL {
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::D
+}
+
+class InstructionLoadFromEToHL: InstructionLoadFromRegisterToHL {
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::E
+}
+
+class InstructionLoadFromHToHL: InstructionLoadFromRegisterToHL {
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::H
+}
+
+class InstructionLoadFromLToHL: InstructionLoadFromRegisterToHL {
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::L
+}
+
 class InstructionLoadFromAToHLDecrement: InstructionLoadFromRegisterToMemory {
     override fun destinationAddress(registers: Registers, data: List<UByte>) = registers.HL()
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A

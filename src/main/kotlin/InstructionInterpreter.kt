@@ -118,7 +118,13 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x6Du -> InstructionLoadRegisterToRegister({ it::L }, { it::L })
             // 0x6E
             0x6Fu -> InstructionLoadRegisterToRegister({ it::A }, { it::L })
-
+            0x70u -> InstructionLoadFromBToHL()
+            0x71u -> InstructionLoadFromCToHL()
+            0x72u -> InstructionLoadFromDToHL()
+            0x73u -> InstructionLoadFromEToHL()
+            0x74u -> InstructionLoadFromHToHL()
+            0x75u -> InstructionLoadFromLToHL()
+            // 0x76
             0x77u -> InstructionLoadFromAToHL()
             0x78u -> InstructionLoadRegisterToRegister({ it::B }, { it::A })
             0x79u -> InstructionLoadRegisterToRegister({ it::C }, { it::A })

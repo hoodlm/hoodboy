@@ -4,17 +4,43 @@ import org.junit.jupiter.api.Test
 class InstructionLoadFromRegisterToMemoryTests: InstructionTestBase() {
 
     @Test
-    fun testHL() {
-        val instruction: Instruction = InstructionLoadFromAToHL()
-        val address: UShort = 8000u
+    fun testLoadToAddressInHL() {
+        val address: UShort = 0x8765u
         r.setHL(address)
         r.A = BYTE_3
-        instruction.invoke(r, m, DATA)
+        InstructionLoadFromAToHL().invoke(r, m, DATA)
         assertEquals(BYTE_3, m.getByte(address))
         // A and HL should be unaffected!
         assertEquals(address, r.HL())
         assertEquals(BYTE_3, r.A)
         r.A = 0u
+
+        r.B = BYTE_2
+        InstructionLoadFromBToHL().invoke(r, m, DATA)
+        assertEquals(BYTE_2, m.getByte(address))
+        r.B = 0u
+
+        r.C = BYTE_1
+        InstructionLoadFromCToHL().invoke(r, m, DATA)
+        assertEquals(BYTE_1, m.getByte(address))
+        r.C = 0u
+
+        r.D = BYTE_3
+        InstructionLoadFromDToHL().invoke(r, m, DATA)
+        assertEquals(BYTE_3, m.getByte(address))
+        r.D = 0u
+
+        r.E = BYTE_2
+        InstructionLoadFromEToHL().invoke(r, m, DATA)
+        assertEquals(BYTE_2, m.getByte(address))
+        r.E = 0u
+
+        InstructionLoadFromHToHL().invoke(r, m, DATA)
+        assertEquals(0x87u, m.getByte(address).toUInt())
+
+        InstructionLoadFromLToHL().invoke(r, m, DATA)
+        assertEquals(0x65u, m.getByte(address).toUInt())
+
         r.setHL(0u)
         r.assertZeroed()
     }
