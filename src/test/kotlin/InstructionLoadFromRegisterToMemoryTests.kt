@@ -5,7 +5,7 @@ class InstructionLoadFromRegisterToMemoryTests: InstructionTestBase() {
 
     @Test
     fun testHL() {
-        val instruction: Instruction = InstructionLoadAFromHL()
+        val instruction: Instruction = InstructionLoadFromAToHL()
         val address: UShort = 8000u
         r.setHL(address)
         r.A = BYTE_3
@@ -21,7 +21,7 @@ class InstructionLoadFromRegisterToMemoryTests: InstructionTestBase() {
 
     @Test
     fun testHL_Decrement() {
-        val instruction: Instruction = InstructionLoadAFromHLDecrement()
+        val instruction: Instruction = InstructionLoadFromAToHLDecrement()
         r.setHL(8000u)
         r.A = BYTE_3
         instruction.invoke(r, m, DATA)
@@ -40,7 +40,7 @@ class InstructionLoadFromRegisterToMemoryTests: InstructionTestBase() {
 
     @Test
     fun testHL_Increment() {
-        val instruction: Instruction = InstructionLoadAFromHLIncrement()
+        val instruction: Instruction = InstructionLoadFromAToHLIncrement()
         r.setHL(8100u)
         r.A = BYTE_2
         instruction.invoke(r, m, DATA)

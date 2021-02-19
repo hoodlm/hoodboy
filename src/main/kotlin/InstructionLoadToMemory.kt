@@ -18,12 +18,15 @@ interface InstructionLoadFromRegisterToMemory: Instruction {
     }
 }
 
-class InstructionLoadAFromHL: InstructionLoadFromRegisterToMemory {
+interface InstructionLoadFromRegisterToHL: InstructionLoadFromRegisterToMemory {
     override fun destinationAddress(registers: Registers, data: List<UByte>) = registers.HL()
+}
+
+class InstructionLoadFromAToHL: InstructionLoadFromRegisterToHL {
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
 }
 
-class InstructionLoadAFromHLDecrement: InstructionLoadFromRegisterToMemory {
+class InstructionLoadFromAToHLDecrement: InstructionLoadFromRegisterToMemory {
     override fun destinationAddress(registers: Registers, data: List<UByte>) = registers.HL()
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
     override fun postInvoke(registers: Registers) {
@@ -31,7 +34,7 @@ class InstructionLoadAFromHLDecrement: InstructionLoadFromRegisterToMemory {
     }
 }
 
-class InstructionLoadAFromHLIncrement: InstructionLoadFromRegisterToMemory {
+class InstructionLoadFromAToHLIncrement: InstructionLoadFromRegisterToMemory {
     override fun destinationAddress(registers: Registers, data: List<UByte>) = registers.HL()
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
     override fun postInvoke(registers: Registers) {

@@ -50,7 +50,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x1Eu -> InstructionLoadEd8()
             0x20u -> InstructionJumpNotZ()
             0x21u -> InstructionLoadHLd16()
-            0x22u -> InstructionLoadAFromHLIncrement()
+            0x22u -> InstructionLoadFromAToHLIncrement()
             0x23u -> InstructionIncrementHL()
             0x24u -> InstructionIncrementH()
             0x25u -> InstructionDecrementH()
@@ -62,7 +62,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x2Eu -> InstructionLoadLd8()
             0x30u -> InstructionJumpNotC()
             0x31u -> InstructionLoadSPd16()
-            0x32u -> InstructionLoadAFromHLDecrement()
+            0x32u -> InstructionLoadFromAToHLDecrement()
             0x33u -> InstructionIncrementSP()
             0x38u -> InstructionJumpC()
             0x3Bu -> InstructionDecrementSP()
@@ -119,7 +119,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             // 0x6E
             0x6Fu -> InstructionLoadRegisterToRegister({ it::A }, { it::L })
 
-            0x77u -> InstructionLoadAFromHL()
+            0x77u -> InstructionLoadFromAToHL()
             0x78u -> InstructionLoadRegisterToRegister({ it::B }, { it::A })
             0x79u -> InstructionLoadRegisterToRegister({ it::C }, { it::A })
             0x7Au -> InstructionLoadRegisterToRegister({ it::D }, { it::A })
