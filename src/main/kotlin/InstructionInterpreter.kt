@@ -44,6 +44,7 @@ class GameBoyInstructionInterpreter: InstructionInterpreter {
             0x14u -> InstructionIncrementD()
             0x15u -> InstructionDecrementD()
             0x16u -> InstructionLoadDd8()
+            0x17u -> InstructionRotateRightANoZeroFlag()
             0x18u -> InstructionJumpUnconditional()
             0x1Au -> InstructionLoadFromDEAddressToA()
             0x1Bu -> InstructionDecrementDE()

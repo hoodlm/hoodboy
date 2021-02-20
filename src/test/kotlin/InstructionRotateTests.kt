@@ -128,6 +128,21 @@ class InstructionRotateTests: InstructionTestBase() {
     }
 
     @Test
+    fun testRotateRightANoZeroFlag() {
+        val instruction = InstructionRotateRightANoZeroFlag()
+        for (i in 0x00u..0xFFu) {
+            r.setFlagN(true)
+            r.setFlagH(true)
+            r.setFlagZ(true)
+            r.B = i.toUByte()
+            instruction.invoke(r, m, DATA)
+            assertFalse(r.flagN())
+            assertFalse(r.flagH())
+            assertFalse(r.flagZ())
+        }
+    }
+
+    @Test
     fun testRotateAlwaysSetsHNFlagsFalse() {
         listOf(InstructionRotateLeftB(), InstructionRotateRightB()).forEach { instruction ->
             for (i in 0x00u..0xFFu) {

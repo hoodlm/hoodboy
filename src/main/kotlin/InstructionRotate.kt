@@ -168,6 +168,25 @@ interface InstructionRotateRight: InstructionRotateBase {
     }
 }
 
+/**
+ * RLA (0x17) is the same as RL A (0xCB17) except that it always sets Z flag to false.
+ * See https://stackoverflow.com/questions/50270872/difference-between-rl-n-and-rla-cpu-instructions
+ */
+class InstructionRotateRightANoZeroFlag: InstructionRotateRight {
+    override val size: UShort
+        get() = 1u
+
+    override fun getValue(r: Registers) = r.A
+    override fun setValue(r: Registers, v: UByte) {
+        r.A = v
+    }
+
+    override fun setFinalFlags(result: UByte, r: Registers) {
+        r.setFlagZ(false)
+        r.setFlagN(false)
+        r.setFlagH(false)
+    }
+}
 
 class InstructionRotateRightA: InstructionRotateRight {
     override fun getValue(r: Registers) = r.A
