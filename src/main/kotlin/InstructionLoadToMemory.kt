@@ -74,13 +74,23 @@ class InstructionLoadAFromC: InstructionLoadFromRegisterToMemory {
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
 }
 
-
-class InstructionLoadAFromLiteral: InstructionLoadFromRegisterToMemory {
+class InstructionLoadAFrom8BitLiteral: InstructionLoadFromRegisterToMemory {
     override val size: UShort
         get() = 2u
 
     override fun destinationAddress(registers: Registers, data: List<UByte>): UShort {
         return (0xFF00u + data[1]).toUShort()
+    }
+
+    override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
+}
+
+class InstructionLoadAFrom16BitLiteral: InstructionLoadFromRegisterToMemory {
+    override val size: UShort
+        get() = 3u
+
+    override fun destinationAddress(registers: Registers, data: List<UByte>): UShort {
+        return Pair(data[2], data[1]).toUShort()
     }
 
     override fun valueRegister(registers: Registers): KMutableProperty<UByte> = registers::A
