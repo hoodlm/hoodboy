@@ -53,3 +53,21 @@ interface InstructionLoadFromDEAddress: InstructionLoadFromMemoryToRegister {
 open class InstructionLoadFromDEAddressToA: InstructionLoadFromDEAddress {
     override fun destinationRegister(registers: Registers): KMutableProperty<UByte> = registers::A
 }
+
+interface InstructionLoad8BitFromMemoryToRegister: Instruction {
+    override val size: UShort
+        get() = 2u
+    fun sourceAddress(registers: Registers, data: List<UByte>): UByte
+    fun destinationRegister(registers: Registers): KMutableProperty<UByte>
+    fun postInvoke(registers: Registers) {
+        // Optional post-invoke code hook, e.g. for decrement/increment register instructions like LD A (HL+)
+    }
+
+    override fun invoke(registers: Registers, memory: Memory, immediateData: List<UByte>) {
+        assert(immediateData.size == 4)
+        val sourceAddress = sourceAddress(registers, immediateData)
+        val value = memory.getByte(sourceAddress)
+        destinationRegister(registers).setter.call(value)
+        postInvoke(registers)
+    }
+}
